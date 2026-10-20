@@ -95,4 +95,4 @@ pytest
 
 The validation and metric modules are real helper code; model training and Mamdani inference remain planned and should not be described as implemented.
 
-For the two possible `Masters` setups, see [`docs/github_masters_folder.md`](docs/github_masters_folder.md).
+
