@@ -1,6 +1,6 @@
 # ACIT4620 — HAM10000 Hybrid AI
 
-**Research prototype: Data-Centric Seven-Class Skin Lesion Classification using Pretrained EfficientNet-B0 and Mamdani Fuzzy Inference.**
+**Research prototype: Data-Centric Seven-Class Skin Lesion Classification using Pretrained EfficientNet-B0 and planned Neuro-Fuzzy Classification Correction.**
 
 ## Current status (7 November 2026)
 
@@ -10,7 +10,10 @@
 - **Local full audit completed:** all 10,015 images decoded without failures; two identical-content pairs stay within their original lesion groups, with zero cross-lesion identical-content hashes. See `docs/dataset_audit_findings.md` for provenance and split-reproduction limits.
 - **Local CNN baseline completed:** EfficientNet-B0 completed 3 head epochs and 8 partial fine-tuning epochs on the fixed local split. Validation accuracy is 75.29%, macro-F1 0.4896, balanced accuracy 46.69%, and melanoma recall 21.23%. Checkpoint, predictions, plots and comparison with the initial 3-epoch run are saved locally in `reports/local_runs/20261107_cnn_baseline_full/` (excluded from Git). See the [local runner guide](docs/local_training.md). These are validation/model-selection results; final test evaluation remains pending.
 - **Additional fine-tuning completed:** 8 more epochs from the baseline weights, with a fresh optimizer, reached validation accuracy 77.65%, macro-F1 0.5328, balanced accuracy 51.35%, and melanoma recall 30.82%. The new run is preserved in `reports/local_runs/20261107_cnn_finetune_continued/`. Three-run comparison CSVs and PNG/SVG figures are in `reports/comparisons/20261107_cnn_three_runs/`. Existing run folders were retained; test evaluation remains pending.
-- **Not yet implemented:** fuzzy inference. Hyperparameter selection and final test-set evaluation remain pending experiments.
+- **Class-weight M2 trial completed:** seed 42, same maximum 3+8 epoch budget and stopping rule. The run stopped after 7 epochs and selected head epoch 3. Melanoma recall improved from 21.23% to 34.25%, while accuracy fell from 75.29% to 53.57% and macro-F1 from 0.4896 to 0.3778. This setting is not an overall improvement under the primary macro-F1 criterion. See `reports/classifier_comparisons/20261107_weighted_vs_ce_seed42/` locally.
+- **Primary hybrid target clarified:** a neuro-fuzzy stage should output corrected final seven-class predictions. The [classifier comparison guide](docs/neuro_fuzzy_evaluation.md) and evaluator support actual final decisions and paired lesion difference intervals. The neuro-fuzzy classifier itself and its real predictions are still pending; no hybrid improvement has been established.
+- **Longer local training completed:** both CNN branches ran 16 additional epochs with patience 12. The selected ordinary CNN reached accuracy 78.28%, macro-F1 0.5402 and melanoma recall 32.88%; its macro-F1 increase over the previous best is small (+0.00739; conditional paired 95% interval -0.01441 to +0.02814). The weighted branch improved over its own source to macro-F1 0.4412, accuracy 63.64%, balanced accuracy 62.43% and melanoma recall 38.36%, but remains below the ordinary CNN on the primary macro-F1 criterion. Five-run CSVs and PNG/SVG plots are in `reports/comparisons/20261107_extended_training_five_runs/`. These are single-seed validation results; no final-test or neuro-fuzzy gain has been established.
+- **Not yet completed:** repeated-training evidence, final model/hybrid selection and held-out test evaluation. Earlier review-priority analyses remain a secondary experiment.
 - **Evaluation code ready:** [validation/review evaluation guide](docs/evaluation_guide.md). Saved predictions support melanoma PR/ROC analysis, calibration summaries, lesion bootstrap intervals and matched-workload review comparisons. Real fuzzy scores can be connected by image ID plus checkpoint/split hashes; no fuzzy results are fabricated. The first report is saved locally in `reports/evaluation/20261107_cnn_review_baselines/`.
 
 ## Classification labels
@@ -43,10 +46,10 @@ Split method: `StratifiedGroupKFold(n_splits=7, shuffle=True, random_state=42)` 
 2. Train seven-output pretrained EfficientNet-B0 with training-only augmentations. Run baseline with regular cross-entropy.
 3. Compare data-centric alternatives, e.g. careful minority-class augmentation/resampling; also test class-weighted cross-entropy **as an optimization choice**. Never change validation/test distributions.
 4. Select/configure model using **validation only** and assess per-class errors, calibration, and subgroup effects.
-5. Implement Mamdani fuzzy review-priority layer using defensible uncertainty/quality measures. Compare against basic probability thresholds at matched review budget.
-6. Evaluate final configuration **once on held-out test data**; report balanced accuracy, macro-F1, confusion matrix, per-class precision/recall, melanoma sensitivity, ROC/PR analyses where appropriate, and fuzzy review sensitivity/workload.
+5. Implement the neuro-fuzzy final-class corrector and compare the same frozen CNN with and without it. Measure actual classification differences and both corrected/new errors. Optional Mamdani review-priority comparisons remain separate.
+6. Freeze the full configuration before final held-out test evaluation; report classification metrics, paired comparisons and limitations. Never choose further model settings from test results.
 
-The Mamdani layer does **not necessarily improve CNN classification accuracy**; its review-decision value must be tested separately.
+Neuro-fuzzy classification improvement is a hypothesis to test. A review-priority score alone does **not** demonstrate classification improvement; it needs separate review-workload evaluation.
 
 ## Repo layout
 

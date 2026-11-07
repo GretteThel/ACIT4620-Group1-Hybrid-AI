@@ -1,5 +1,10 @@
 # CNN and fuzzy review evaluation
 
+**Scope clarification, 7 November 2026:** the primary hybrid now targets corrected
+final seven-class predictions. Use [the classifier comparison guide](neuro_fuzzy_evaluation.md)
+for CNN-versus-neuro-fuzzy classification and paired metric differences. This
+page describes the separate, secondary review-priority analysis.
+
 `scripts/evaluate_review.py` evaluates saved **validation** predictions. It does
 not train a model, change class predictions, invent fuzzy results, or read test
 predictions. The reusable calculations are in `src/ham10000_hybrid/evaluation.py`.
@@ -19,7 +24,10 @@ augmentation and epoch budget**. The existing training notebook contains
 with macro-F1/balanced accuracy; an increase in recall is not a guaranteed outcome.
 Do not simultaneously add oversampling to the first weighting experiment, since
 that makes the effect difficult to identify. No new weighted model was trained
-as part of preparing this evaluation code.
+as part of preparing the original review evaluation code. A subsequent seed-42
+weighted-loss trial is documented in `docs/local_training.md`; it improved
+melanoma recall but reduced macro-F1/accuracy and was not adopted as an overall
+improvement.
 
 Separately, a melanoma-probability threshold can flag cases for review. Its
 precision/recall/workload trade-off is exported, but it is not automatically
