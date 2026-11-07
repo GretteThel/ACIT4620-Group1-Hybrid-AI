@@ -2,13 +2,14 @@
 
 **Research prototype: Data-Centric Seven-Class Skin Lesion Classification using Pretrained EfficientNet-B0 and Mamdani Fuzzy Inference.**
 
-## Current status (20 October 2026)
+## Current status (7 November 2026)
 
 - Dataset: HAM10000 / ISIC 2018 **Task 3 — Lesion Diagnosis** (10,015 dermoscopic images, 7 diagnosis categories).
 - EDA has been run on Kaggle, and a **lesion-disjoint** train/validation/test assignment has been verified.
 - Source notebook is provided in `notebooks/01_HAM10000_Seven_Class_Data_Audit.ipynb` (outputs cleared for version control; rerun on Kaggle to reproduce figures).
-- **Pending:** full 10,015-image quality scan and independent cross-image hash scan. Previous preview checked 600 images; duplicate *folder copies* were byte-verified.
-- **Not yet implemented:** CNN model training, hyperparameter selection, fuzzy inference, and test-set evaluation. Do not report any model performance until those experiments are run.
+- **Local full audit completed:** all 10,015 images decoded without failures; two identical-content pairs stay within their original lesion groups, with zero cross-lesion identical-content hashes. See `docs/dataset_audit_findings.md` for provenance and split-reproduction limits.
+- **Local CNN training verified:** EfficientNet-B0 completed an initial 3-epoch run on the locally reproduced split. Checkpoint, validation metrics, predictions, plots and a result summary are saved locally in `reports/local_runs/20261107_initial_cnn/` (excluded from Git). See the [local runner guide](docs/local_training.md). This is an initial run; final test evaluation remains pending.
+- **Not yet implemented:** fuzzy inference. Hyperparameter selection and final test-set evaluation remain pending experiments.
 
 ## Classification labels
 
@@ -93,6 +94,8 @@ pytest
 
 **GitHub placement:** `.github/workflows/ci.yml` works as-is only when this project is its **own GitHub repository root**. If the project lives inside a larger `Masters/` repository, move this file to that repository's root `.github/workflows/` and point its job to this subdirectory.
 
-The validation and metric modules are real helper code; model training and Mamdani inference remain planned and should not be described as implemented.
+The validation and metric modules are reusable helpers. EfficientNet training code is
+available in Notebook 02 and the local runner; successful dataset training requires
+the saved manifests, original images and completed audit. Mamdani inference remains planned.
 
 

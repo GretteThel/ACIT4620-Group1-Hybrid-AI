@@ -7,8 +7,9 @@ matplotlib
 seaborn
 Pillow
 tqdm
+IPython
 
-# Planned model phase (not implemented in this repo yet)
+# EfficientNet training notebook and local runner
 torch
 torchvision
 

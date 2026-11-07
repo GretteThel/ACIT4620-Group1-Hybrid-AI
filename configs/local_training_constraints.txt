@@ -1,0 +1,3 @@
+# Notebook 01's recorded split counts reproduce with this version.
+# Newer StratifiedGroupKFold implementations can change the assignments.
+scikit-learn==1.5.2

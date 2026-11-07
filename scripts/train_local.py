@@ -1,0 +1,273 @@
+"""Run the existing EfficientNet training notebook on local HAM10000 files.
+
+Uses the notebook's training cells directly, retaining its fixed split and audit
+gates. No images are downloaded, no splits are generated, and test evaluation
+stays disabled. Every attempt gets a separate folder, including failed attempts.
+"""
+
+import argparse
+import ast
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import traceback
+from contextlib import redirect_stderr, redirect_stdout
+from datetime import datetime, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+NOTEBOOK = ROOT / "notebooks/ACIT4620_02_EfficientNetB0_7Class_Training.ipynb"
+
+
+class Tee:
+    def __init__(self, console, log):
+        self.console = console
+        self.log = log
+
+    def write(self, message):
+        self.console.write(message)
+        self.log.write(message)
+        self.flush()
+
+    def flush(self):
+        self.console.flush()
+        self.log.flush()
+
+    def __getattr__(self, name):
+        return getattr(self.console, name)
+
+
+def write_json(path, value):
+    path.write_text(json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--data-dir", type=Path, default=ROOT / "data")
+    parser.add_argument("--manifest", type=Path)
+    parser.add_argument("--audit-summary", type=Path)
+    parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--head-epochs", type=int, default=3)
+    parser.add_argument("--finetune-epochs", type=int, default=8)
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--cpu-threads", type=int, default=4)
+    parser.add_argument(
+        "--check-environment", action="store_true",
+        help="Only check pretrained model + GPU forward/backward with synthetic tensors",
+    )
+    args = parser.parse_args()
+    if min(args.head_epochs, args.finetune_epochs, args.batch_size, args.cpu_threads) < 1:
+        parser.error("Epoch counts, batch size and CPU thread count must be positive")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S_%fZ")
+    kind = "environment_check" if args.check_environment else "efficientnet_b0_baseline"
+    args.output_dir = (args.output_dir or ROOT / "reports" / "local_runs" / f"{stamp}_{kind}").resolve()
+    args.data_dir = args.data_dir.resolve()
+    return args
+
+
+def find_input(explicit, folder, filenames):
+    if explicit:
+        return explicit.resolve() if explicit.is_file() else None
+    for name in filenames:
+        candidates = sorted(folder.rglob(name))
+        if len(candidates) > 1:
+            raise ValueError(f"Multiple {name} files found; choose an explicit path")
+        if candidates:
+            return candidates[0].resolve()
+    return None
+
+
+def check_environment(out, cpu_threads):
+    import torch
+    import torchvision
+    from torch import nn
+    from torchvision.models import EfficientNet_B0_Weights, efficientnet_b0
+
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA is unavailable; install a compatible CUDA PyTorch build")
+    torch.set_num_threads(cpu_threads)
+    torch.manual_seed(42)
+    torch.cuda.manual_seed_all(42)
+    weights = EfficientNet_B0_Weights.DEFAULT
+    model = efficientnet_b0(weights=weights).cuda()
+    model.classifier[1] = nn.Linear(model.classifier[1].in_features, 7).cuda()
+    for parameter in model.features.parameters():
+        parameter.requires_grad = False
+    model.eval()
+    optimizer = torch.optim.AdamW(model.classifier.parameters(), lr=1e-3)
+    inputs = torch.zeros(2, 3, 224, 224, device="cuda")
+    targets = torch.tensor([0, 1], device="cuda")
+    logits = model(inputs)
+    nn.CrossEntropyLoss()(logits, targets).backward()
+    if not torch.isfinite(model.classifier[1].weight.grad).all():
+        raise RuntimeError("Non-finite gradients in GPU check")
+    optimizer.step()
+    torch.cuda.synchronize()
+    report = {
+        "purpose": "Environment check on synthetic tensors; NOT HAM10000 training or evaluation",
+        "torch": torch.__version__, "torchvision": torchvision.__version__,
+        "cuda_runtime": torch.version.cuda, "gpu": torch.cuda.get_device_name(0),
+        "compute_capability": list(torch.cuda.get_device_capability(0)),
+        "pretrained_weights": str(weights), "pretrained_url": weights.url,
+        "output_shape": list(logits.shape), "forward_backward_optimizer_step": "passed",
+        "dataset_used": False, "test_evaluated": False,
+    }
+    write_json(out / "environment_check.json", report)
+    print(json.dumps(report, indent=2))
+
+
+def configured_import_cell(source, args):
+    """Override notebook controls structurally, leaving model/training code intact."""
+    overrides = {
+        "EXPERIMENT_NAME": args.output_dir.name,
+        "HEAD_EPOCHS": args.head_epochs, "FINETUNE_EPOCHS": args.finetune_epochs,
+        "BATCH_SIZE": args.batch_size,
+        # Notebook-defined dataset classes cannot be pickled by Windows spawn.
+        "NUM_WORKERS": 0,
+        "REQUIRE_COMPLETE_AUDIT": True, "RUN_FINAL_TEST": False,
+    }
+    tree = ast.parse(source)
+    changed = set()
+    for node in tree.body:
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Name):
+            continue
+        if target.id in overrides:
+            node.value = ast.Constant(overrides[target.id])
+            changed.add(target.id)
+        elif target.id == "OUT":
+            node.value = ast.parse(f"Path({str(args.output_dir)!r})", mode="eval").body
+            changed.add("OUT")
+    if changed != set(overrides) | {"OUT"}:
+        raise RuntimeError("Notebook controls changed; update the local runner before executing")
+    return compile(ast.fix_missing_locations(tree), str(NOTEBOOK), "exec")
+
+
+def train(args):
+    manifest = find_input(args.manifest, args.data_dir, [
+        "seven_class_master_manifest.csv", "ham10000_master_manifest.csv",
+    ])
+    audit = find_input(args.audit_summary, args.data_dir, ["audit_summary.json"])
+    metadata = sorted(args.data_dir.rglob("HAM10000_metadata.csv"))
+    missing = []
+    if manifest is None:
+        missing.append("Saved Notebook 01 master manifest with the existing split assignments")
+    if audit is None:
+        missing.append("Notebook 01 completed audit_summary.json")
+    if len(metadata) != 1:
+        missing.append("Exactly one HAM10000_metadata.csv and its original JPEG image folders")
+    preflight = {
+        "data_dir": str(args.data_dir),
+        "manifest": str(manifest) if manifest else None,
+        "audit_summary": str(audit) if audit else None,
+        "metadata_files": [str(p) for p in metadata], "missing_inputs": missing,
+    }
+    write_json(args.output_dir / "input_check.json", preflight)
+    if missing:
+        raise FileNotFoundError("Training inputs are missing:\n- " + "\n- ".join(missing))
+
+    import pandas as pd
+
+    sys.path.insert(0, str(ROOT / "src"))
+    from ham10000_hybrid.data_validation import CLASS_CODES, validate_manifest
+
+    frame = pd.read_csv(manifest)
+    validation = validate_manifest(frame)
+    if "label" in frame and not frame["label"].eq(
+        frame["dx"].map({code: i for i, code in enumerate(CLASS_CODES)})
+    ).all():
+        raise ValueError("Saved label indices differ from the project class order")
+    write_json(args.output_dir / "manifest_validation.json", validation)
+    notebook = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
+    namespace = {"__name__": "__local_training__"}
+    code_cells = [cell for cell in notebook["cells"] if cell["cell_type"] == "code"]
+    if code_cells[0].get("id") != "8232e368" or code_cells[1].get("id") != "fc72d83c":
+        raise RuntimeError("Notebook structure changed; update the local runner")
+    for index, cell in enumerate(code_cells):
+        print(f"\nRunning notebook code cell {index + 1}/{len(code_cells)} ({cell['id']})")
+        if index == 1:
+            namespace.update({
+                "DATA_DIR": metadata[0].parent, "MANIFEST_PATH": manifest,
+                "manifest": frame,
+                "pick_one": lambda pattern: [audit] if pattern == "audit_summary.json" else [],
+            })
+            continue
+        source = "".join(cell["source"])
+        code = configured_import_cell(source, args) if index == 0 else compile(
+            source, f"{NOTEBOOK}:cell_{cell['id']}", "exec"
+        )
+        exec(code, namespace)
+        if index == 0:
+            namespace["torch"].set_num_threads(args.cpu_threads)
+            if namespace["DEVICE"].type != "cuda":
+                raise RuntimeError("No CUDA GPU available; full local training was not started")
+            # Save notebook figures without opening GUI windows; release each figure.
+            plt = namespace["plt"]
+            plt.show = lambda *a, **kw: plt.close("all")
+            namespace["display"] = print
+        if cell["id"] == "74ae9924":
+            write_json(args.output_dir / "validation_metrics.json", namespace["val_metrics"])
+            labels = namespace["val_y"]
+            predictions = namespace["val_pred"]
+            per_class = namespace["classification_report"](
+                labels, predictions, labels=list(range(7)),
+                target_names=namespace["CLASS_CODES"], output_dict=True, zero_division=0,
+            )
+            write_json(args.output_dir / "validation_classification_report.json", per_class)
+
+
+def main():
+    args = parse_args()
+    args.output_dir.mkdir(parents=True, exist_ok=False)
+    os.environ.setdefault("TORCH_HOME", str(ROOT / "data" / "model_cache"))
+    os.environ.setdefault("MPLCONFIGDIR", str(ROOT / "reports" / ".matplotlib"))
+    os.environ["MPLBACKEND"] = "Agg"
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=False,
+    ).stdout.strip()
+    request = {key: str(value) if isinstance(value, Path) else value
+               for key, value in vars(args).items()}
+    request.update({
+        "git_commit": commit, "python": sys.version, "executable": sys.executable,
+        "notebook_sha256": hashlib.sha256(NOTEBOOK.read_bytes()).hexdigest(),
+        "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "test_evaluated": False,
+    })
+    write_json(args.output_dir / "run_request.json", request)
+    packages = subprocess.run(
+        [sys.executable, "-m", "pip", "freeze"],
+        text=True, capture_output=True, check=False,
+    )
+    if packages.returncode == 0:
+        (args.output_dir / "environment_packages.txt").write_text(
+            packages.stdout, encoding="utf-8",
+        )
+    status = {"state": "running", "started_utc": datetime.now(timezone.utc).isoformat(),
+              "mode": "environment_check" if args.check_environment else "dataset_training"}
+    write_json(args.output_dir / "run_status.json", status)
+    failed = False
+    with (args.output_dir / "run.log").open("w", encoding="utf-8") as log:
+        with redirect_stdout(Tee(sys.stdout, log)), redirect_stderr(Tee(sys.stderr, log)):
+            print("Output folder:", args.output_dir)
+            try:
+                if args.check_environment:
+                    check_environment(args.output_dir, args.cpu_threads)
+                else:
+                    train(args)
+                status["state"] = "completed"
+            except Exception as error:
+                failed = True
+                status.update({"state": "failed", "error": str(error)})
+                traceback.print_exc()
+            finally:
+                status["finished_utc"] = datetime.now(timezone.utc).isoformat()
+                write_json(args.output_dir / "run_status.json", status)
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

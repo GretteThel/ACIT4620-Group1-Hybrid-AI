@@ -4,4 +4,6 @@
 
 `ham10000_hybrid/metrics.py` computes classification metrics for the seven classes and melanoma recall.
 
-CNN training and the Mamdani fuzzy inference engine are **not yet implemented**; add them as separately reviewed modules and connect them to the same fixed split.
+CNN training is provided in `notebooks/ACIT4620_02_EfficientNetB0_7Class_Training.ipynb`,
+with `scripts/train_local.py` as a local entry point. See `docs/local_training.md`.
+The Mamdani fuzzy inference engine is not yet implemented.
