@@ -19,8 +19,8 @@ def compute_classification_metrics(
 ) -> dict:
     """Compute dataset-wide and per-class measures for the seven known diagnoses.
 
-    Inputs are diagnosis codes. Probability-based calibration, AUROC, AUPRC,
-    and fuzzy referral evaluation are separate experiments and not fabricated here.
+    Inputs are diagnosis codes. Probability/calibration summaries and review
+    evaluation are implemented separately in evaluation.py.
     """
     y_true, y_pred = list(true_labels), list(predicted_labels)
     if not y_true or len(y_true) != len(y_pred):
