@@ -56,17 +56,24 @@ def parse_args():
         help="Warm-start from a completed local run; optimizer and RNG are initialized anew",
     )
     parser.add_argument("--finetune-epochs", type=int, default=8)
+    parser.add_argument("--patience", type=int, default=4,
+                        help="Stop a stage after this many epochs without validation improvement")
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--cpu-threads", type=int, default=4)
+    parser.add_argument("--seed", type=int, default=42, help="Training RNG seed; saved data splits stay fixed")
+    parser.add_argument("--class-weights", action=argparse.BooleanOptionalAction, default=False,
+                        help="Use N_train/(7*class_count) cross-entropy weights from training only")
     parser.add_argument(
         "--check-environment", action="store_true",
         help="Only check pretrained model + GPU forward/backward with synthetic tensors",
     )
     args = parser.parse_args()
+    if not 0 <= args.seed < 2**32:
+        parser.error("Training seed must be in [0, 2**32)")
     if args.head_epochs is None:
         args.head_epochs = 0 if args.init_checkpoint else 3
-    if min(args.finetune_epochs, args.batch_size, args.cpu_threads) < 1 or args.head_epochs < 0:
-        parser.error("Fine-tuning epochs, batch size and CPU threads must be positive")
+    if min(args.finetune_epochs, args.patience, args.batch_size, args.cpu_threads) < 1 or args.head_epochs < 0:
+        parser.error("Fine-tuning epochs, patience, batch size and CPU threads must be positive")
     if args.head_epochs == 0 and not args.init_checkpoint:
         parser.error("Skipping head training requires --init-checkpoint")
     if args.init_checkpoint:
@@ -74,7 +81,9 @@ def parse_args():
         if not args.init_checkpoint.is_file():
             parser.error("Initial checkpoint does not exist")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S_%fZ")
-    kind = "environment_check" if args.check_environment else "efficientnet_b0_baseline"
+    kind = "environment_check" if args.check_environment else (
+        "efficientnet_b0_weighted" if args.class_weights else "efficientnet_b0_baseline"
+    )
     args.output_dir = (args.output_dir or ROOT / "reports" / "local_runs" / f"{stamp}_{kind}").resolve()
     args.data_dir = args.data_dir.resolve()
     return args
@@ -92,7 +101,7 @@ def find_input(explicit, folder, filenames):
     return None
 
 
-def check_environment(out, cpu_threads):
+def check_environment(out, cpu_threads, seed=42):
     import torch
     import torchvision
     from torch import nn
@@ -101,8 +110,8 @@ def check_environment(out, cpu_threads):
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is unavailable; install a compatible CUDA PyTorch build")
     torch.set_num_threads(cpu_threads)
-    torch.manual_seed(42)
-    torch.cuda.manual_seed_all(42)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
     weights = EfficientNet_B0_Weights.DEFAULT
     model = efficientnet_b0(weights=weights).cuda()
     model.classifier[1] = nn.Linear(model.classifier[1].in_features, 7).cuda()
@@ -136,7 +145,9 @@ def configured_import_cell(source, args):
     overrides = {
         "EXPERIMENT_NAME": args.output_dir.name,
         "HEAD_EPOCHS": args.head_epochs, "FINETUNE_EPOCHS": args.finetune_epochs,
+        "PATIENCE": args.patience,
         "BATCH_SIZE": args.batch_size,
+        "SEED": args.seed, "USE_CLASS_WEIGHTS": args.class_weights,
         # Notebook-defined dataset classes cannot be pickled by Windows spawn.
         "NUM_WORKERS": 0,
         "REQUIRE_COMPLETE_AUDIT": True, "RUN_FINAL_TEST": False,
@@ -157,6 +168,21 @@ def configured_import_cell(source, args):
             changed.add("OUT")
     if changed != set(overrides) | {"OUT"}:
         raise RuntimeError("Notebook controls changed; update the local runner before executing")
+    return compile(ast.fix_missing_locations(tree), str(NOTEBOOK), "exec")
+
+
+def configured_loss_cell(source):
+    """Keep validation cross-entropy unweighted for fair plots across objectives."""
+    tree = ast.parse(source)
+    changed = 0
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "evaluate_loader":
+            for call in ast.walk(node):
+                if isinstance(call, ast.Call) and isinstance(call.func, ast.Name) and call.func.id == "criterion":
+                    call.func = ast.Name(id="evaluation_criterion", ctx=ast.Load())
+                    changed += 1
+    if changed != 1:
+        raise RuntimeError("Notebook validation loss changed; update the local runner")
     return compile(ast.fix_missing_locations(tree), str(NOTEBOOK), "exec")
 
 
@@ -302,6 +328,9 @@ def train(args):
         code = configured_import_cell(source, args) if index == 0 else compile(
             source, f"{NOTEBOOK}:cell_{cell['id']}", "exec"
         )
+        if cell["id"] == "6bfdf1b1":
+            namespace["evaluation_criterion"] = namespace["nn"].CrossEntropyLoss()
+            code = configured_loss_cell(source)
         if cell["id"] == "6709321c" and args.init_checkpoint:
             initial_metrics = namespace["evaluate_loader"](namespace["val_loader"])
             write_json(args.output_dir / "initial_validation_metrics.json", initial_metrics)
@@ -327,6 +356,16 @@ def train(args):
             })
         if cell["id"] == "2e69edb2" and args.init_checkpoint:
             load_initial_checkpoint(args, namespace)
+        if cell["id"] == "6bfdf1b1":
+            write_json(args.output_dir / "loss_configuration.json", {
+                "training_objective": "class_weighted_cross_entropy" if args.class_weights else "cross_entropy",
+                "class_codes": namespace["CLASS_CODES"],
+                "training_class_counts": namespace["train_counts"].tolist(),
+                "training_class_weights": namespace["class_weights"].tolist() if args.class_weights else None,
+                "weight_source": "training split only",
+                "validation_loss": "unweighted cross_entropy for all experiments",
+                "training_loss_note": "Batch-reduced training objective; do not compare weighted/unweighted train-loss values directly",
+            })
         if cell["id"] == "74ae9924":
             write_json(args.output_dir / "validation_metrics.json", namespace["val_metrics"])
             labels = namespace["val_y"]
@@ -338,6 +377,10 @@ def train(args):
             write_json(args.output_dir / "validation_classification_report.json", per_class)
     settings = namespace["settings"]
     settings["completed_epochs"] = len(namespace["history"])
+    settings["patience"] = namespace["PATIENCE"]
+    settings["validation_loss"] = "unweighted_cross_entropy"
+    settings["training_class_weights"] = namespace["class_weights"].tolist() if args.class_weights else None
+    settings["split_policy"] = "Reuse saved manifest; --seed changes training randomness only"
     if args.init_checkpoint:
         lineage = namespace["local_warm_start"]
         selected_digest = hashlib.sha256(
@@ -387,7 +430,7 @@ def main():
             print("Output folder:", args.output_dir)
             try:
                 if args.check_environment:
-                    check_environment(args.output_dir, args.cpu_threads)
+                    check_environment(args.output_dir, args.cpu_threads, args.seed)
                 else:
                     with keep_system_awake():
                         train(args)

@@ -214,3 +214,108 @@ The continuation report is at
 comparison report, CSVs and PNG/SVG figures are at
 `reports/comparisons/20261107_cnn_three_runs/`. The original 3-epoch and 11-epoch
 run folders remain available. All reported scores are validation results.
+
+## Controlled class-weight experiment
+
+`--class-weights` enables the existing training-only inverse-frequency weights.
+`--no-class-weights` keeps ordinary cross-entropy. `--seed` controls training RNG
+only; the saved split is never regenerated. Run both arms from ImageNet weights
+with the same maximum budget/settings, rather than warm-starting only one arm.
+Validation cross-entropy is unweighted for both arms, so validation-loss plots
+have a common definition. Training losses have different objectives and should
+not be compared directly. `loss_configuration.json` records counts and weights.
+
+```powershell
+.\.venv\Scripts\python.exe -u -X utf8 scripts/train_local.py `
+  --class-weights --seed 42 --head-epochs 3 --finetune-epochs 8 `
+  --manifest data/notebook01/ham10000_7class/seven_class_master_manifest.csv `
+  --audit-summary data/notebook01/ham10000_audit/audit_summary.json `
+  --output-dir reports/local_runs/20261107_cnn_weighted_seed42
+```
+
+The 7 November M2 trial completed with the existing patience-4 rule: 3 head and
+4 fine-tuning epochs ran, then head epoch 3 was selected by validation macro-F1.
+The ordinary baseline ran all 11 epochs. The maximum budget and stopping rule
+matched, but the actual executed epoch counts differ.
+
+| Validation metric | Ordinary CE baseline | Inverse-frequency weighted CE |
+|---|---:|---:|
+| Accuracy | 75.29% | 53.57% |
+| Balanced accuracy | 46.69% | 54.82% |
+| Macro-F1 | 0.4896 | 0.3778 |
+| Melanoma recall | 21.23% | 34.25% |
+| Melanoma precision | 41.89% | 25.13% |
+
+The weighting setting increases recall/balanced accuracy but is **not an overall
+improvement under the predefined macro-F1 selection criterion**. It corrected
+107 baseline errors and introduced 420; melanoma misses corrected/introduced
+were 32/13. This is one training seed and does not establish a general verdict
+on all class-weighting approaches. Do not replace the stronger saved CNN with
+this model merely because one metric rose.
+
+The run and its loss/weight provenance are in
+`reports/local_runs/20261107_cnn_weighted_seed42/`. Learning-curve comparisons are
+in `reports/comparisons/20261107_weighted_vs_ce_seed42/`, and paired difference
+intervals are in `reports/classifier_comparisons/20261107_weighted_vs_ce_seed42/`.
+Seed 43/44 repeats have not been run. This experiment does not test neuro-fuzzy
+classification; see `docs/neuro_fuzzy_evaluation.md` for that distinct comparison.
+
+## Longer local fine-tuning
+
+`--patience` controls the number of consecutive non-improving epochs before a
+stage stops (default 4, positive integer). Increasing `--finetune-epochs` alone
+does not increase that stopping tolerance. The local runner records both values
+in its request and saves the effective patience in `experiment_config.json`.
+
+The 7 November follow-up uses up to 16 additional fine-tuning epochs and patience
+12 for each of the previous strongest unweighted model and the weighted model.
+Both keep the same saved split, seed, learning rates and augmentations. Source
+weights are loaded with fresh optimizer/RNG states; existing run folders are
+preserved. This is a continuation study with different starting checkpoints,
+not a controlled estimate of the weighting treatment effect.
+
+```powershell
+.\.venv\Scripts\python.exe -u -X utf8 scripts/train_local.py `
+  --init-checkpoint reports/local_runs/20261107_cnn_finetune_continued/best_efficientnet_b0.pth `
+  --finetune-epochs 16 --patience 12 --seed 42 --no-class-weights `
+  --output-dir reports/local_runs/20261107_cnn_extended_unweighted_16ep
+
+.\.venv\Scripts\python.exe -u -X utf8 scripts/train_local.py `
+  --init-checkpoint reports/local_runs/20261107_cnn_weighted_seed42/best_efficientnet_b0.pth `
+  --finetune-epochs 16 --patience 12 --seed 42 --class-weights `
+  --output-dir reports/local_runs/20261107_cnn_extended_weighted_16ep
+```
+
+The comparison uses macro-F1 as the selection criterion and reports other
+metrics and error transitions as well. Retaining the original checkpoint means
+no improvement, even though the selection rule protects its previous score.
+Final testing remains disabled. The plan is saved in
+`reports/experiment_plans/20261107_extended_training.json`.
+
+Both extensions completed all 16 additional epochs on the RTX 5070 Ti. The
+unweighted run selected local epoch 10 (checkpoint-lineage epoch 29); the weighted
+run selected local epoch 13 (checkpoint-lineage epoch 16). The weighted source
+was its selected head epoch 3, not the discarded last fine-tuning epoch. Both
+source checkpoint hashes remain unchanged, selected weights reloaded, and saved
+validation predictions reproduced the reported metrics.
+
+| Validation metric | Previous best ordinary CNN | Extended ordinary CNN | Original weighted CNN | Extended weighted CNN |
+|---|---:|---:|---:|---:|
+| Accuracy | 77.65% | 78.28% | 53.57% | 63.64% |
+| Balanced accuracy | 51.35% | 52.30% | 54.82% | 62.43% |
+| Macro-F1 | 0.5328 | 0.5402 | 0.3778 | 0.4412 |
+| Melanoma recall | 30.82% | 32.88% | 34.25% | 38.36% |
+
+The ordinary extension's macro-F1 difference is +0.00739 with conditional paired
+lesion bootstrap 95% interval [-0.01441, +0.02814]. This modest validation gain
+does not establish a clear generalization improvement. The weighted extension
+improves over its own source by +0.06338 [0.03116, 0.09967], but is below the
+extended ordinary model by -0.09901 [-0.15044, -0.04506]. Keep the ordinary model
+as the primary macro-F1 candidate. These intervals do not include training-seed
+variance or remove optimism from selecting models on validation.
+
+Five-run CSVs and PNG/SVG plots are in
+`reports/comparisons/20261107_extended_training_five_runs/`; the run folders have
+their own `RESULTS.md` and `artifact_verification.json`. The paired comparisons
+are in `reports/classifier_comparisons/20261107_extended_*`. Neither branch
+evaluated the final test set or implemented a neuro-fuzzy classifier.

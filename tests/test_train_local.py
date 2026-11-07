@@ -15,16 +15,22 @@ FUNCTIONS = runpy.run_path(str(RUNNER))
 
 def test_local_controls_keep_test_and_audit_protected(tmp_path):
     source = """from pathlib import Path
+import random
+SEED = 42
+random.seed(SEED)
+USE_CLASS_WEIGHTS = False
 EXPERIMENT_NAME = 'old'
 HEAD_EPOCHS = 10
 FINETUNE_EPOCHS = 10
+PATIENCE = 4
 BATCH_SIZE = 64
 NUM_WORKERS = 2
 REQUIRE_COMPLETE_AUDIT = False
 RUN_FINAL_TEST = True
 OUT = Path('/kaggle/working')
 """
-    args = Namespace(output_dir=tmp_path, head_epochs=3, finetune_epochs=8, batch_size=32)
+    args = Namespace(output_dir=tmp_path, head_epochs=3, finetune_epochs=8, batch_size=32,
+                     seed=17, class_weights=True, patience=12)
     namespace = {}
     exec(FUNCTIONS["configured_import_cell"](source, args), namespace)
     assert namespace["OUT"] == tmp_path
@@ -32,10 +38,15 @@ OUT = Path('/kaggle/working')
     assert namespace["RUN_FINAL_TEST"] is False
     assert namespace["NUM_WORKERS"] == 0
     assert namespace["HEAD_EPOCHS"] == 3
+    assert namespace["PATIENCE"] == 12
+    assert namespace["SEED"] == 17
+    assert namespace["USE_CLASS_WEIGHTS"] is True
+    assert namespace["random"].random() == namespace["random"].Random(17).random()
 
 
 def test_notebook_control_changes_stop_execution(tmp_path):
-    args = Namespace(output_dir=tmp_path, head_epochs=3, finetune_epochs=8, batch_size=32)
+    args = Namespace(output_dir=tmp_path, head_epochs=3, finetune_epochs=8, batch_size=32,
+                     seed=42, class_weights=False, patience=4)
     with pytest.raises(RuntimeError, match="Notebook controls changed"):
         FUNCTIONS["configured_import_cell"]("RENAMED_SETTING = 1", args)
 
@@ -111,4 +122,34 @@ def test_warm_start_defaults_to_finetuning_only(tmp_path, monkeypatch):
     args = FUNCTIONS["parse_args"]()
     assert args.head_epochs == 0
     assert args.finetune_epochs == 8
+    assert args.patience == 4
     assert args.init_checkpoint == checkpoint.resolve()
+
+
+def test_class_weight_option_keeps_validation_loss_unweighted():
+    source = """def evaluate_loader(x):
+    return criterion(x)
+def training_loss(x):
+    return criterion(x)
+"""
+    namespace = {"criterion": lambda x: 3 * x, "evaluation_criterion": lambda x: x}
+    exec(FUNCTIONS["configured_loss_cell"](source), namespace)
+    assert namespace["evaluate_loader"](2) == 2
+    assert namespace["training_loss"](2) == 6
+    with pytest.raises(RuntimeError, match="validation loss changed"):
+        FUNCTIONS["configured_loss_cell"]("def renamed(x): return criterion(x)")
+
+
+def test_seed_and_weight_arguments_are_recordable(tmp_path, monkeypatch):
+    monkeypatch.setattr(sys, "argv", [str(RUNNER), "--class-weights", "--seed", "43", "--patience", "12"])
+    args = FUNCTIONS["parse_args"]()
+    assert args.class_weights is True
+    assert args.seed == 43
+    assert args.head_epochs == 3
+    assert args.patience == 12
+    monkeypatch.setattr(sys, "argv", [str(RUNNER), "--seed", "-1"])
+    with pytest.raises(SystemExit):
+        FUNCTIONS["parse_args"]()
+    monkeypatch.setattr(sys, "argv", [str(RUNNER), "--patience", "0"])
+    with pytest.raises(SystemExit):
+        FUNCTIONS["parse_args"]()
