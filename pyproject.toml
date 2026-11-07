@@ -25,6 +25,8 @@ addopts = "-q"
 [tool.ruff]
 line-length = 100
 target-version = "py310"
+# Preserve the user-supplied executed reference notebook byte-for-byte.
+extend-exclude = ["src/ham10000_hybrid/ham10000-eda-7class.ipynb"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I"]
