@@ -10,10 +10,11 @@ import ast
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import traceback
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -49,7 +50,11 @@ def parse_args():
     parser.add_argument("--manifest", type=Path)
     parser.add_argument("--audit-summary", type=Path)
     parser.add_argument("--output-dir", type=Path)
-    parser.add_argument("--head-epochs", type=int, default=3)
+    parser.add_argument("--head-epochs", type=int, default=None)
+    parser.add_argument(
+        "--init-checkpoint", type=Path,
+        help="Warm-start from a completed local run; optimizer and RNG are initialized anew",
+    )
     parser.add_argument("--finetune-epochs", type=int, default=8)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--cpu-threads", type=int, default=4)
@@ -58,8 +63,16 @@ def parse_args():
         help="Only check pretrained model + GPU forward/backward with synthetic tensors",
     )
     args = parser.parse_args()
-    if min(args.head_epochs, args.finetune_epochs, args.batch_size, args.cpu_threads) < 1:
-        parser.error("Epoch counts, batch size and CPU thread count must be positive")
+    if args.head_epochs is None:
+        args.head_epochs = 0 if args.init_checkpoint else 3
+    if min(args.finetune_epochs, args.batch_size, args.cpu_threads) < 1 or args.head_epochs < 0:
+        parser.error("Fine-tuning epochs, batch size and CPU threads must be positive")
+    if args.head_epochs == 0 and not args.init_checkpoint:
+        parser.error("Skipping head training requires --init-checkpoint")
+    if args.init_checkpoint:
+        args.init_checkpoint = args.init_checkpoint.resolve()
+        if not args.init_checkpoint.is_file():
+            parser.error("Initial checkpoint does not exist")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S_%fZ")
     kind = "environment_check" if args.check_environment else "efficientnet_b0_baseline"
     args.output_dir = (args.output_dir or ROOT / "reports" / "local_runs" / f"{stamp}_{kind}").resolve()
@@ -147,6 +160,95 @@ def configured_import_cell(source, args):
     return compile(ast.fix_missing_locations(tree), str(NOTEBOOK), "exec")
 
 
+def validate_checkpoint_metadata(checkpoint, class_codes, split_sha256):
+    if checkpoint.get("class_codes") != list(class_codes):
+        raise ValueError("Initial checkpoint class order differs from this experiment")
+    if checkpoint.get("split_sha256") != split_sha256:
+        raise ValueError("Initial checkpoint uses a different split fingerprint")
+    if "model_state" not in checkpoint:
+        raise ValueError("Initial checkpoint is missing model_state")
+
+
+def configured_training_cell(source, initial_score):
+    tree = ast.parse(source)
+    changed = 0
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(
+            isinstance(target, ast.Name) and target.id == "best_score" for target in node.targets
+        ):
+            node.value = ast.parse(repr(tuple(initial_score)), mode="eval").body
+            changed += 1
+    if changed != 1:
+        raise RuntimeError("Notebook best-score initialization changed; update the local runner")
+    return compile(ast.fix_missing_locations(tree), str(NOTEBOOK), "exec")
+
+
+def load_initial_checkpoint(args, namespace):
+    """Validate lineage and load weights; do not claim optimizer/RNG resumption."""
+    torch = namespace["torch"]
+    checkpoint = torch.load(args.init_checkpoint, map_location="cpu", weights_only=True)
+    validate_checkpoint_metadata(checkpoint, namespace["CLASS_CODES"], namespace["SPLIT_SHA256"])
+    parent = args.init_checkpoint.parent
+    parent_status = json.loads((parent / "run_status.json").read_text(encoding="utf-8"))
+    parent_settings = json.loads((parent / "experiment_config.json").read_text(encoding="utf-8"))
+    if parent_status["state"] != "completed":
+        raise ValueError("The source local run did not complete")
+    if parent_settings["use_class_weights"] != namespace["USE_CLASS_WEIGHTS"]:
+        raise ValueError("Warm-start comparisons must use the same loss weighting")
+    for field, control in [
+        ("seed", "SEED"), ("batch_size", "BATCH_SIZE"),
+        ("backbone_lr", "BACKBONE_LR"), ("fine_tune_head_lr", "FINETUNE_HEAD_LR"),
+    ]:
+        if parent_settings[field] != namespace[control]:
+            raise ValueError(f"Warm-start comparison changes {field}")
+    digest = hashlib.sha256(args.init_checkpoint.read_bytes()).hexdigest()
+    parent_history = namespace["pd"].read_csv(parent / "training_history.csv")
+    matches = parent_history.index[
+        (parent_history["stage"] == checkpoint["stage"])
+        & (parent_history["epoch"] == checkpoint["epoch"])
+    ].tolist()
+    parent_warm = parent_settings.get("warm_start")
+    offset = int(parent_warm["cumulative_epochs_at_initialization"]) if parent_warm else 0
+    if parent_warm and parent_warm.get("selected_checkpoint_origin") == "parent":
+        source_epochs = offset
+    elif len(matches) == 1:
+        source_epochs = offset + int(matches[0]) + 1
+    else:
+        raise ValueError("Cannot identify the source checkpoint epoch in its history")
+    namespace["model"].load_state_dict(checkpoint["model_state"], strict=True)
+    lineage = {
+        "source_checkpoint": str(args.init_checkpoint), "source_run": str(parent),
+        "source_checkpoint_sha256": digest,
+        "source_stage": checkpoint["stage"], "source_epoch": checkpoint["epoch"],
+        "cumulative_epochs_at_initialization": source_epochs,
+        "optimizer_state_restored": False, "rng_state_restored": False,
+        "initialization": "saved model weights; fresh optimizer and seeded RNG",
+    }
+    namespace["local_warm_start"] = lineage
+    write_json(args.output_dir / "warm_start.json", lineage)
+    print("Loaded warm-start checkpoint:", args.init_checkpoint)
+    print("Source checkpoint SHA-256:", digest)
+
+
+@contextmanager
+def keep_system_awake():
+    kernel = None
+    if sys.platform == "win32":
+        import ctypes
+
+        kernel = ctypes.windll.kernel32
+        if not kernel.SetThreadExecutionState(0x80000001):
+            kernel = None
+            print("Windows sleep-prevention request could not be enabled")
+        else:
+            print("Windows system sleep prevented for this run; display may sleep")
+    try:
+        yield
+    finally:
+        if kernel is not None:
+            kernel.SetThreadExecutionState(0x80000000)
+
+
 def train(args):
     manifest = find_input(args.manifest, args.data_dir, [
         "seven_class_master_manifest.csv", "ham10000_master_manifest.csv",
@@ -200,6 +302,14 @@ def train(args):
         code = configured_import_cell(source, args) if index == 0 else compile(
             source, f"{NOTEBOOK}:cell_{cell['id']}", "exec"
         )
+        if cell["id"] == "6709321c" and args.init_checkpoint:
+            initial_metrics = namespace["evaluate_loader"](namespace["val_loader"])
+            write_json(args.output_dir / "initial_validation_metrics.json", initial_metrics)
+            shutil.copy2(args.init_checkpoint, args.output_dir / "best_efficientnet_b0.pth")
+            code = configured_training_cell(
+                source, (initial_metrics["macro_f1"], initial_metrics["balanced_accuracy"]),
+            )
+            print("Initial validation metrics:", initial_metrics)
         exec(code, namespace)
         if index == 0:
             namespace["torch"].set_num_threads(args.cpu_threads)
@@ -209,6 +319,14 @@ def train(args):
             plt = namespace["plt"]
             plt.show = lambda *a, **kw: plt.close("all")
             namespace["display"] = print
+            torch = namespace["torch"]
+            write_json(args.output_dir / "runtime_environment.json", {
+                "device": str(namespace["DEVICE"]), "gpu": torch.cuda.get_device_name(0),
+                "torch": torch.__version__, "cuda_runtime": torch.version.cuda,
+                "compute_capability": list(torch.cuda.get_device_capability(0)),
+            })
+        if cell["id"] == "2e69edb2" and args.init_checkpoint:
+            load_initial_checkpoint(args, namespace)
         if cell["id"] == "74ae9924":
             write_json(args.output_dir / "validation_metrics.json", namespace["val_metrics"])
             labels = namespace["val_y"]
@@ -218,6 +336,19 @@ def train(args):
                 target_names=namespace["CLASS_CODES"], output_dict=True, zero_division=0,
             )
             write_json(args.output_dir / "validation_classification_report.json", per_class)
+    settings = namespace["settings"]
+    settings["completed_epochs"] = len(namespace["history"])
+    if args.init_checkpoint:
+        lineage = namespace["local_warm_start"]
+        selected_digest = hashlib.sha256(
+            (args.output_dir / "best_efficientnet_b0.pth").read_bytes(),
+        ).hexdigest()
+        lineage["selected_checkpoint_origin"] = (
+            "parent" if selected_digest == lineage["source_checkpoint_sha256"] else "current_run"
+        )
+        settings["warm_start"] = lineage
+        write_json(args.output_dir / "warm_start.json", lineage)
+    write_json(args.output_dir / "experiment_config.json", settings)
 
 
 def main():
@@ -238,6 +369,7 @@ def main():
         "test_evaluated": False,
     })
     write_json(args.output_dir / "run_request.json", request)
+    (args.output_dir / "runner_source.py").write_bytes(Path(__file__).read_bytes())
     packages = subprocess.run(
         [sys.executable, "-m", "pip", "freeze"],
         text=True, capture_output=True, check=False,
@@ -257,7 +389,8 @@ def main():
                 if args.check_environment:
                     check_environment(args.output_dir, args.cpu_threads)
                 else:
-                    train(args)
+                    with keep_system_awake():
+                        train(args)
                 status["state"] = "completed"
             except Exception as error:
                 failed = True

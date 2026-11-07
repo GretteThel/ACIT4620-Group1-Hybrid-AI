@@ -71,3 +71,44 @@ def test_existing_output_folder_is_not_overwritten(tmp_path):
     assert result.returncode != 0
     assert sentinel.read_text(encoding="utf-8") == "existing result"
     assert not (tmp_path / "run_status.json").exists()
+
+
+def test_warm_start_rejects_different_class_order_and_split():
+    checkpoint = {"class_codes": ["nv", "mel"], "split_sha256": "split_a", "model_state": {}}
+    validate = FUNCTIONS["validate_checkpoint_metadata"]
+    validate(checkpoint, ["nv", "mel"], "split_a")
+    with pytest.raises(ValueError, match="class order"):
+        validate(checkpoint, ["mel", "nv"], "split_a")
+    with pytest.raises(ValueError, match="different split"):
+        validate(checkpoint, ["nv", "mel"], "split_b")
+
+
+def test_warm_start_preserves_parent_selection_score():
+    source = "history = []\nbest_score = (-1., -1.)\n"
+    namespace = {}
+    exec(FUNCTIONS["configured_training_cell"](source, (0.49, 0.46)), namespace)
+    assert namespace["history"] == []
+    assert namespace["best_score"] == (0.49, 0.46)
+    with pytest.raises(RuntimeError, match="best-score initialization changed"):
+        FUNCTIONS["configured_training_cell"]("renamed_best = None", (0.49, 0.46))
+
+
+def test_head_training_cannot_be_skipped_without_checkpoint(tmp_path):
+    out = tmp_path / "attempt"
+    result = subprocess.run(
+        [sys.executable, str(RUNNER), "--head-epochs", "0", "--output-dir", str(out)],
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 2
+    assert "Skipping head training requires" in result.stderr
+    assert not out.exists()
+
+
+def test_warm_start_defaults_to_finetuning_only(tmp_path, monkeypatch):
+    checkpoint = tmp_path / "saved_model.pth"
+    checkpoint.write_bytes(b"parser fixture")
+    monkeypatch.setattr(sys, "argv", [str(RUNNER), "--init-checkpoint", str(checkpoint)])
+    args = FUNCTIONS["parse_args"]()
+    assert args.head_epochs == 0
+    assert args.finetune_epochs == 8
+    assert args.init_checkpoint == checkpoint.resolve()
