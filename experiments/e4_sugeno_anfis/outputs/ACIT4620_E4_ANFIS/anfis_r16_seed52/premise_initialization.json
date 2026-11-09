@@ -1,0 +1,22 @@
+{
+  "method": "KMeans centers on frozen-CNN TRAIN projections only",
+  "width_init": "1.25 times projected training standard deviation, clipped",
+  "cluster_counts": [
+    375,
+    425,
+    481,
+    447,
+    358,
+    257,
+    291,
+    348,
+    418,
+    460,
+    488,
+    521,
+    609,
+    542,
+    665,
+    431
+  ]
+}

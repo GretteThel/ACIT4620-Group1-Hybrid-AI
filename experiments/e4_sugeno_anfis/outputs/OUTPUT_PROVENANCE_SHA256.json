@@ -1,0 +1,759 @@
+{
+  "source_uploaded_zips_identical": true,
+  "original_backup_sha256": "8aec12d42781029a496d5ea6be37df9ceafcc04ea1907497409fbe6eb9cf8137",
+  "source_feature_checkpoint_sha256": "2efbe67904bed16aec8fbf1f47e3af11f1a0136e7eab4a4c5cbd004edf9b9af9",
+  "split_sha256": "265ec2412f4dd7d50c75b46d75a095c0d3445250895b90b91f3d73aca9aebce0",
+  "num_original_output_files": 150,
+  "files": [
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/best_anfis_head.pth",
+      "bytes": 49717,
+      "sha256": "a819db98a4b8adb55d5e83af2ac2ea484ff9c685ac6d3b6497700c400dc31fc9"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/learned_gaussian_premises.csv",
+      "bytes": 5733,
+      "sha256": "626043af1e932b6002ca5695c71ccf273e23fdd6a8d30d09bdd53c6bc5b8c559"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/premise_initialization.json",
+      "bytes": 337,
+      "sha256": "067580641acf0857ce724f5362ae2a6f6f6c6b837466123a763e589ec5f6af84"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/rule_ablation_faithfulness.json",
+      "bytes": 805,
+      "sha256": "60015deca524bcb67fc9eb7c4a6f9fac9dd146ef5e7db1e10cec8cf91e747e31"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/rule_activation_by_class.csv",
+      "bytes": 2769,
+      "sha256": "59cb69bef88d3dfed1635c2900659634f9ff271342b480b1070b7c1d77eebd2e"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/rule_activation_by_class.png",
+      "bytes": 48826,
+      "sha256": "eff2f5e9c963c952009cacb3642aff743ece622921d5614edb691d0ed5ff48e3"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/training_curves.png",
+      "bytes": 81417,
+      "sha256": "1526bd29c844cdbaea70498eeb3142a5d5f28c43aeab25fa33cc9925f702644c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/training_history.csv",
+      "bytes": 2845,
+      "sha256": "3fbbcc12bb0b60acad219a1e120278ac0fac5ca7ce204f7d9f142b39f2c491aa"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/validation_confusion_matrix.png",
+      "bytes": 62436,
+      "sha256": "9951a6e5ffccde431245fcc72f7903477ab89111db0c45b7308f8aa9fe3ec3d4"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/validation_metrics.json",
+      "bytes": 942,
+      "sha256": "9141c1d5d2a6a3680c1dffe9b7d0f7f6361ddb6a2d2ebbdf84b2ff1f14b4e6a4"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/validation_per_class.csv",
+      "bytes": 467,
+      "sha256": "2345512b67c8cd74fff388218c5f27deabaf70d922bab7a6cb40051b329bc3b8"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/validation_predictions.csv",
+      "bytes": 265618,
+      "sha256": "98cc00bd7e92477e297f90be9cbc77cc3aec8b10965d493a778d1fe6fa4cd088"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/validation_predictions.npz",
+      "bytes": 50057,
+      "sha256": "69136ddfcf7d24cd4d62d26587df3b2ffbb0828c3cec6b53e3da21a42117d619"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/validation_rule_ablation.csv",
+      "bytes": 90097,
+      "sha256": "e2b43bd6cf85f8bccf855627876dbe08660f535ffa295cba86e19080e2e3bf43"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/validation_rule_contributions.csv",
+      "bytes": 657748,
+      "sha256": "d48b52a70bf81ec1a43cd7bb777111c30b3736b2fa066b54867367baf9ec2227"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed42/validation_rule_explanations.npz",
+      "bytes": 1419290,
+      "sha256": "63f42bc873d0d579f8364c9d880e34dca17231a089aa036b5fd5ae7ee0c51bb7"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/best_anfis_head.pth",
+      "bytes": 49717,
+      "sha256": "020663d064b6e7cb5b12b70d84974dd652c7d78c3759d1f696ade08de786dc18"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/learned_gaussian_premises.csv",
+      "bytes": 5728,
+      "sha256": "f59f2983472b49d25e84ffe8e8e591ec74d2fdc4c4cd28324aa95610aa59908f"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/premise_initialization.json",
+      "bytes": 337,
+      "sha256": "9bfeddfac04c3793e09b892a307bb7a7805f92784ec8bd9bebba6938305103e4"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/rule_ablation_faithfulness.json",
+      "bytes": 808,
+      "sha256": "3b8fc81d354a46fa0b23162079d4c952cdd22a93918f04fc0a5d37adbe02bb60"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/rule_activation_by_class.csv",
+      "bytes": 2754,
+      "sha256": "fef57f1319a76bfd1613d876133f6bf8d4d64d6e6995285d8573e554081c5c3d"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/rule_activation_by_class.png",
+      "bytes": 48824,
+      "sha256": "ec66f1f5bd81f7d96cf454ef6e1c99c6f03cc3cfdc0776f2199f9b0160b62b5c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/training_curves.png",
+      "bytes": 78481,
+      "sha256": "e6858e37a23a24c3ef346c526deb1cf20ce7be1a83bd5a4666dc9ca813a84913"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/training_history.csv",
+      "bytes": 4168,
+      "sha256": "a6d1e3fdc33cd0052b734fab73b609ad98560162f6a9d38f22711c7a6e3f2d65"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/validation_confusion_matrix.png",
+      "bytes": 63229,
+      "sha256": "363d18fa6d45b5f752fbc45130fc39d74731b6be8c1e3d3741b846c6a4982629"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/validation_metrics.json",
+      "bytes": 945,
+      "sha256": "4b5f0919d4467bc1467d1dac3b297522b248723b7315b7289f7a4a01d2915641"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/validation_per_class.csv",
+      "bytes": 451,
+      "sha256": "b34423f9ae7d0b59305e51db5b248ee3afb8bc31b32639d51aa08e829aa54f1e"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/validation_predictions.csv",
+      "bytes": 268805,
+      "sha256": "5cc04df9a5f90c3dcb93a25f37eaa61c78caf3ecaaada74310d7539614d079c4"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/validation_predictions.npz",
+      "bytes": 50283,
+      "sha256": "b02a35d4eba3b5e03bbe1c4cea35878b768d2448a3f76dd68e2f38076d12772b"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/validation_rule_ablation.csv",
+      "bytes": 88008,
+      "sha256": "593b795868a11cbc1c086192d80599820ed122ea8e1f5c83251697a5a9bfc40f"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/validation_rule_contributions.csv",
+      "bytes": 658315,
+      "sha256": "e791ac7c0c834b69042b9119c6adbc5d07078930d00da97f6f2373d0d82bded1"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed52/validation_rule_explanations.npz",
+      "bytes": 1419403,
+      "sha256": "0a732ffc4b52648e80da2216d23e6c97c4912d31261aa145be259e657c4351c2"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/best_anfis_head.pth",
+      "bytes": 49717,
+      "sha256": "9db9c31f5239f6754561bb4a3eca0f740816d486a8d5ab0d88c7cc76512a01cf"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/learned_gaussian_premises.csv",
+      "bytes": 5731,
+      "sha256": "5383fbbe5b9bf29b02d1dcc474893569ff676766c00330521f01ec549fba93ef"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/premise_initialization.json",
+      "bytes": 337,
+      "sha256": "13502dee20faf3c7f69ffcd6e38b0f082c4da468f359535154e81ad7089278e4"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/rule_ablation_faithfulness.json",
+      "bytes": 808,
+      "sha256": "6a2345950681b8058cf618b9bf0617761c22b5e26d6d3d43d7a4621facdeeedb"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/rule_activation_by_class.csv",
+      "bytes": 2758,
+      "sha256": "470aa15c9e0e86fa541f008f0e6e7852746a52cfa00d7f5df14e86543a4b5488"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/rule_activation_by_class.png",
+      "bytes": 47411,
+      "sha256": "dd65e7ded6b3f16f433a778c660c77f6f13bb873c32c906a4ff0021cb99d1a5b"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/training_curves.png",
+      "bytes": 77752,
+      "sha256": "4771a07938ee74a11706bf0816ca75446cc3aebe7ca5dcf4a0ce41d921c060af"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/training_history.csv",
+      "bytes": 3824,
+      "sha256": "37cee9648b9a995b3b5f31a092142d5f073697b54c2950c18dee18f57f4ad5aa"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/validation_confusion_matrix.png",
+      "bytes": 62860,
+      "sha256": "e7b9833f690b99548c70f8961fa054c7e6953d3a1ea6239798bcc86b6a36f414"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/validation_metrics.json",
+      "bytes": 940,
+      "sha256": "4258c37f230198d386291726b52db4920175339aa21ac85a9a07530919ff3c65"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/validation_per_class.csv",
+      "bytes": 498,
+      "sha256": "e52a6460aade257712dc748815aded46e0ce6ada9ba74190dbb3026fa99446e2"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/validation_predictions.csv",
+      "bytes": 267973,
+      "sha256": "45221c6e0d8607100132015532d929339aa5d978c05f0f81f2ecdf4231449f86"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/validation_predictions.npz",
+      "bytes": 50202,
+      "sha256": "d88f7de9bcab3000d3ad2dfa07643079fefd4139bfea2a8ef28191d38e02afeb"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/validation_rule_ablation.csv",
+      "bytes": 89707,
+      "sha256": "b787b866077949687785e508c72b77e92364b4761982a6944552582cf92de214"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/validation_rule_contributions.csv",
+      "bytes": 660079,
+      "sha256": "f4f951a2691933cb6818a2434944b533754f1d552c6b88ead6aac4e0c6fad8f3"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r16_seed62/validation_rule_explanations.npz",
+      "bytes": 1419880,
+      "sha256": "53acc6e3cd65ffbd9979d7fa08f16c0eb4a3b5077d12c870680048bf73111d7a"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/best_anfis_head.pth",
+      "bytes": 45877,
+      "sha256": "49bbb577c5f95f7d2192c01e1314a8569e0783038082cf980ffa4af85cf9209f"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/learned_gaussian_premises.csv",
+      "bytes": 1455,
+      "sha256": "da025ff7687b083628c8e8af1c1bf847475217e967b65dfacbb79b658ed5b319"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/premise_initialization.json",
+      "bytes": 221,
+      "sha256": "bc293c79d630322f7c0d3d1b6201e90be130784bde838ac2c7e93d271b315480"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/rule_ablation_faithfulness.json",
+      "bytes": 806,
+      "sha256": "f00656af2ae57091ff829d103f361fd4591ba9e142d6c89dfd46e51c543b397c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/rule_activation_by_class.csv",
+      "bytes": 718,
+      "sha256": "12a601f83c21008595bc43f7b0a03bd16d4e511f81dfed4c25bb1c113a0fb0ee"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/rule_activation_by_class.png",
+      "bytes": 37640,
+      "sha256": "014f8079ca776e804e1860a10e7f93179ca450bfa8e22056730f15c94fd9cf1f"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/training_curves.png",
+      "bytes": 86904,
+      "sha256": "c443fbf04fd7ab99dbbabdfda67df3dac0093e16fd45456f4c0bc46393195c9c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/training_history.csv",
+      "bytes": 3612,
+      "sha256": "addca824129eea720e9b320e2f5515c5eb929b29635452b0661815d1155d1d75"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/validation_confusion_matrix.png",
+      "bytes": 63133,
+      "sha256": "c089c76494de77f1ed20b074cb0c9f7d7251e3680491858450e62bf586cf4766"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/validation_metrics.json",
+      "bytes": 945,
+      "sha256": "2feb239e260d050525afa6ec8d1114a60af307555350c816a71626ec320307a1"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/validation_per_class.csv",
+      "bytes": 485,
+      "sha256": "4a98b1f7316793ea3820c8aa2509dd4a0789afa372c7e536cb7bf43615f13cc0"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/validation_predictions.csv",
+      "bytes": 267560,
+      "sha256": "6756c2d497a3d506d8c34fbd9fe2e20c0fc0d5963b5f70f33295da77a20c1c07"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/validation_predictions.npz",
+      "bytes": 50221,
+      "sha256": "acfc0d40d4442e8b357926e70765044a644c97e5a233914a4cac5e659ea1c314"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/validation_rule_ablation.csv",
+      "bytes": 90959,
+      "sha256": "b971976acfc97977b9668fe8bc62819b1ef48564658553127916a9a729a16b5b"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/validation_rule_contributions.csv",
+      "bytes": 189986,
+      "sha256": "03b690c068f80ebb09bc4d6e7f509d6f51632361a8fa52ef2604e89892b5a298"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed42/validation_rule_explanations.npz",
+      "bytes": 423156,
+      "sha256": "18659dccf38cfe2552f05c028496cb2d575ab4743f916b8053e39f4b7dd444bc"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/best_anfis_head.pth",
+      "bytes": 45877,
+      "sha256": "5ea9952f6019f9f4a032596c73e9b26f01ee78aa50cfb8dc0d551a332f586170"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/learned_gaussian_premises.csv",
+      "bytes": 1453,
+      "sha256": "cb9ab9829d63bacbed1fb65e794eb73b92ed85d202e12f4df52644e653348f60"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/premise_initialization.json",
+      "bytes": 221,
+      "sha256": "6abfc12844ec069394c04b37a2761cad809b29ed9ec4346746d62d909f1fcf0d"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/rule_ablation_faithfulness.json",
+      "bytes": 803,
+      "sha256": "0189952bc9c5581cd73baec3e9ed41b6b9194ad7d8f2bf6e52c5a9f573b3dd54"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/rule_activation_by_class.csv",
+      "bytes": 718,
+      "sha256": "5829080d3ebd74bb0bc2d0a64c372d231d8e557d470657dd82b1dc44d9721005"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/rule_activation_by_class.png",
+      "bytes": 36546,
+      "sha256": "8bb4b213141d9a307e441c2f1a25617a5a0793bf771c2675e67ae144d57ac54c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/training_curves.png",
+      "bytes": 78004,
+      "sha256": "c2b285af6db89d1bbad624df685eccfc82e66ccbd18ba4821e9c04974f4abc9b"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/training_history.csv",
+      "bytes": 4824,
+      "sha256": "2274a77d38bb297d0bdcff801e5bf516605360f5f93ab46b76028a2ff7d7379b"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/validation_confusion_matrix.png",
+      "bytes": 64702,
+      "sha256": "4cb94a4d72a392b603bcd1d8ccef471ceb66b5fc76766dbcf083cdb4865faa02"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/validation_metrics.json",
+      "bytes": 941,
+      "sha256": "0580d28d5df4baa01cd20d331366a1ecf4509b379dd0ac3a3d7fc15e5a729182"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/validation_per_class.csv",
+      "bytes": 465,
+      "sha256": "b6be6d348836ddf01a10d8171d5df913b6c5f8eb21827fcc031a655a1106ed3c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/validation_predictions.csv",
+      "bytes": 269044,
+      "sha256": "c52e38c4dc2ba6fba7e025eca3f2af7b5d1c59d930eecc634253f74058389444"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/validation_predictions.npz",
+      "bytes": 50327,
+      "sha256": "ba23025432d6345e51dca1b68d096fc9f9238cab29b0d6a368934ae47d56e802"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/validation_rule_ablation.csv",
+      "bytes": 90109,
+      "sha256": "a3ec154740d3a336cfdef8ebdbc35a042c2e2baff37d01aad14bee0e15d1565e"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/validation_rule_contributions.csv",
+      "bytes": 189456,
+      "sha256": "7447dfbf2de6896d537d54ea537b58bc4d01c92b058b023944fc27694675d316"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed52/validation_rule_explanations.npz",
+      "bytes": 421802,
+      "sha256": "bcc02d47b7b0426f987401d1b30c433743f421f0543a9d972b2a39ab4a1d6bc0"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/best_anfis_head.pth",
+      "bytes": 45877,
+      "sha256": "866c63c3898a59762fc1233a7d011f61a8379b73d5e008be06032dfbbef0bbd3"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/learned_gaussian_premises.csv",
+      "bytes": 1463,
+      "sha256": "2ea9644c5b05a3633969af72359f387433cf48d70752d04effdcb28df0cff8d6"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/premise_initialization.json",
+      "bytes": 221,
+      "sha256": "bb38ca8595f9e3739f1e19be87fc583279d380c112b847f988f0e51eae1a2676"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/rule_ablation_faithfulness.json",
+      "bytes": 804,
+      "sha256": "a5a40b628bf27e270aa5dd91cd8d57b862551ec0ea942c594c65e555521a82f0"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/rule_activation_by_class.csv",
+      "bytes": 717,
+      "sha256": "78455ae63da434a3a5621b6c7d8bd70fa251bcae7b37de1a559982d16ee3aefa"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/rule_activation_by_class.png",
+      "bytes": 33987,
+      "sha256": "5db14324d49b6980f579758a9f73f47a6c066fe20db931e4016bec38c93be068"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/training_curves.png",
+      "bytes": 78590,
+      "sha256": "7b24ec4f5b57f87440391168138e315641e51b232bfbe52bdf42b239709072de"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/training_history.csv",
+      "bytes": 3705,
+      "sha256": "e8c0b905f88b9fa5bef7bf616c73c328d3f72b7b943061ab296f686a9021291f"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/validation_confusion_matrix.png",
+      "bytes": 64692,
+      "sha256": "47dd36dc79701b1fc97a24dd365d1a759cd383af4de83f87cf57e12cb127177f"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/validation_metrics.json",
+      "bytes": 927,
+      "sha256": "45f2b02cbcd2384898344951a56130da63f9d0706e81bbe89ffbc2e67118a946"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/validation_per_class.csv",
+      "bytes": 480,
+      "sha256": "a6730984c641dc61edc9711bb418bc6292ad06ba9033b80c8c10e412b7fe00ce"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/validation_predictions.csv",
+      "bytes": 268149,
+      "sha256": "34f83b7602b8266fe2c3138ff71c8d39dda0bca29e7a830ec4eacffab0329921"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/validation_predictions.npz",
+      "bytes": 50261,
+      "sha256": "e8180d04bd026b2ee10d770b2fffb7a9f5d0b26cb1b68ba0a605545c145b5cb4"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/validation_rule_ablation.csv",
+      "bytes": 92460,
+      "sha256": "fc0de762360b9922799079481bd6c0c8e2bf6a0762509ffb967ed8f0f257c560"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/validation_rule_contributions.csv",
+      "bytes": 189352,
+      "sha256": "e4c16ebbffb3a8653ae6ae6a3dadc99e506ad48ba811078ff420adb76d2a28b8"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r4_seed62/validation_rule_explanations.npz",
+      "bytes": 421921,
+      "sha256": "497920ccde9840742dff6d837b9b7d110d813d13427bd8829efa98cb6809ab9b"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/best_anfis_head.pth",
+      "bytes": 47157,
+      "sha256": "a11e178e2914a53c5e6a68f162105216f7dce587c91b0405376c5c3de0dc661d"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/learned_gaussian_premises.csv",
+      "bytes": 2867,
+      "sha256": "e50146ce64ef704e7df6e856cdd7e34312481c3dd655a38de49e8eb8de513cf8"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/premise_initialization.json",
+      "bytes": 260,
+      "sha256": "6d17cdd91e041ed99eb2b38b481ba7f500991f3cdedc40773070d5ac7c1c971c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/rule_ablation_faithfulness.json",
+      "bytes": 803,
+      "sha256": "b089ea46f7349bff4894bdbd249c84b766c02b077c5ff6a0b9754388110ee6e0"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/rule_activation_by_class.csv",
+      "bytes": 1383,
+      "sha256": "4b57d93f2b0e0cdba0f7a96ecdd771d61cb93af31ce4f05af9dfedc2b7b3f468"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/rule_activation_by_class.png",
+      "bytes": 41087,
+      "sha256": "4669ef88dd761a19972fe2ce231c533773b5d993e4071f7dc1341ce188bc4b9c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/training_curves.png",
+      "bytes": 80974,
+      "sha256": "98fd64c4d91028dafdb3e7a4fe780e0713a9728f88fe5a30d5fc3b87fe533465"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/training_history.csv",
+      "bytes": 5726,
+      "sha256": "89d3a6ef59e947d678b929b7a07809201fb17b3b280a04976f354c114fdc6b10"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/validation_confusion_matrix.png",
+      "bytes": 65619,
+      "sha256": "dba916e014130b095938c7a27bf1f5ab4101541961e23bebd05177dea451e9de"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/validation_metrics.json",
+      "bytes": 938,
+      "sha256": "0622fdb8d0455647f3dfc35f99ea8738f92c3f09803a0440d2ca80d000d39a30"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/validation_per_class.csv",
+      "bytes": 437,
+      "sha256": "9d23d46c8545fc439c4600b227c246b560e8120153e56748a1fd703afb90c806"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/validation_predictions.csv",
+      "bytes": 270206,
+      "sha256": "ac1666504cfae46c481dbf614394b04d7f58b7f4a49681cdf53313864f9bdb71"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/validation_predictions.npz",
+      "bytes": 50315,
+      "sha256": "ace28d1c75ecbdcfc0cd3d300d80f4c13b354f2c423c4ba2c02a0faa22e06a05"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/validation_rule_ablation.csv",
+      "bytes": 88009,
+      "sha256": "82e22973898c9a139d2ef3ee4100a5254439a36d563ea303774f603a8d2d46d5"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/validation_rule_contributions.csv",
+      "bytes": 347556,
+      "sha256": "e8a8bcae3dcc8d0ce87784acef60c0c7bad351bbdc90c95e25828a2acc9cc45f"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed42/validation_rule_explanations.npz",
+      "bytes": 755902,
+      "sha256": "de92e4d02a2c378ad6e9c080225e50fc6f7136cf0e1bf98a07895c0ade2c7ae2"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/best_anfis_head.pth",
+      "bytes": 47157,
+      "sha256": "9d7fad5b066cc1afdd6efbd28517fcf399b68ad950ee1509e3f7e57013318f07"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/learned_gaussian_premises.csv",
+      "bytes": 2880,
+      "sha256": "b99238d346c0d167fe18f49c40836e6b1146cef80e58c409c73ac2f4b3f24e18"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/premise_initialization.json",
+      "bytes": 260,
+      "sha256": "4b84a44bd5b2dd169648e89170c7aa51bdac8ca6910cb2bddf010b213c62575f"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/rule_ablation_faithfulness.json",
+      "bytes": 804,
+      "sha256": "48263c75c79bd583ef559aae6dc32f4a0c70ee230aecfd2c0ff9b6f958c71ba7"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/rule_activation_by_class.csv",
+      "bytes": 1386,
+      "sha256": "de6abef7e6af979423f592cfca0a20fcde5ca3cb179a2c550c5ba2412d0f4d3c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/rule_activation_by_class.png",
+      "bytes": 40546,
+      "sha256": "ba1264c48f6f4ae518022fda7bba4cd7e680c1c24e70a01854e69135b2d53f22"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/training_curves.png",
+      "bytes": 80603,
+      "sha256": "8d2f164e97e1414d103f1e175bb62c8a8f8b5a5299c4cfa5b306c7fb7a3b6fe6"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/training_history.csv",
+      "bytes": 3411,
+      "sha256": "30ba3534582071d4bf03eec76d563350904be8825ff5353843608b497579748a"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/validation_confusion_matrix.png",
+      "bytes": 62426,
+      "sha256": "034b88eb8b8b68e848e0e97a01b34a6dd5e1ccaa380d6bd06f7e1928eb647128"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/validation_metrics.json",
+      "bytes": 942,
+      "sha256": "0ac09a5add171ad1ca6a61f5222a758b394c61a84cbdb8483a1047c6e72d7d47"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/validation_per_class.csv",
+      "bytes": 467,
+      "sha256": "0f1fb8e4780b05daf949be6d947a57463a4ed7fd8510a3e05c8ae49aa0b18d0c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/validation_predictions.csv",
+      "bytes": 267613,
+      "sha256": "2f3167c1a26e588426244a08a9e47a9a3998c62fcf0cb86135050a4056d8d618"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/validation_predictions.npz",
+      "bytes": 50203,
+      "sha256": "5102b7e0d22a1f7bd6f5edf67104a3682e5295ed9d42f018e63a7ebe9ae3821d"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/validation_rule_ablation.csv",
+      "bytes": 89241,
+      "sha256": "30fcbf45e2a417f41188773e943f9c2eb6a04f56701ecb3a0c8ad225cc310a36"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/validation_rule_contributions.csv",
+      "bytes": 348886,
+      "sha256": "c419530ffb6cbec06a8c7716d7cf8e9b784a2ce6fc7ecffb0f24da1024289104"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed52/validation_rule_explanations.npz",
+      "bytes": 756538,
+      "sha256": "a0b44fbe5a24e1aa4d874b148490f3bab44986c76b0c08f66437aef50b7a35bc"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/best_anfis_head.pth",
+      "bytes": 47157,
+      "sha256": "2b8000d5c5632992dfe12289921e3e225380c15dab5a8e8e97e79a0c6dde88af"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/learned_gaussian_premises.csv",
+      "bytes": 2852,
+      "sha256": "dd3ada8bcf0a080f1b236eab6986429d2cb4e7cba270138ea7e44bf55e110501"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/premise_initialization.json",
+      "bytes": 259,
+      "sha256": "7ccf879c613635b6033ccd308f4778ef68aeb0eced94e130529448661252a1e9"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/rule_ablation_faithfulness.json",
+      "bytes": 805,
+      "sha256": "702852b959f9cc03655a50ed33a246900eb3714e9b021533a40e7ef75e4d026e"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/rule_activation_by_class.csv",
+      "bytes": 1379,
+      "sha256": "dece997a45dcf3ea50cbb89b6cb0616c90526325dbe8df9c03dba26798ff6b40"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/rule_activation_by_class.png",
+      "bytes": 40470,
+      "sha256": "78df15411589cbeb2a32747d5c6d8a8f5ccfc4f07461115758dd5cea55c6fa96"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/training_curves.png",
+      "bytes": 81476,
+      "sha256": "6b3fb41a937cebde2d3f3ba9ecd087e53bcb54846a0f7b7f73f69915d94dba5d"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/training_history.csv",
+      "bytes": 4094,
+      "sha256": "434752f4c12ef2ecec08a29fa731a7302ebbfeee4da95dc87cb77f9abf2e7b59"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/validation_confusion_matrix.png",
+      "bytes": 62259,
+      "sha256": "c3a6414d1f38ed49f20ef826d5f7e1f7cac233c7cf87aad3ea672d57428e75d1"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/validation_metrics.json",
+      "bytes": 943,
+      "sha256": "9adbef23fd45bfe0f4b2bc4d5a6948f27b2ed2e1d8e8e0b9cec13fc5369e8b00"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/validation_per_class.csv",
+      "bytes": 476,
+      "sha256": "ef4ff35cc54638ced97bac7437bb6b2afce10a053058d554bd529cadd4adb56b"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/validation_predictions.csv",
+      "bytes": 268634,
+      "sha256": "df979ed8cbbe8e16fe097525b1a51ad30c4e8298773ecf492c90a614f2c3a07c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/validation_predictions.npz",
+      "bytes": 50243,
+      "sha256": "116583d318a4de66dcd3e81aa92ddba0a5b2a7262a1162e3f56d7050108f6fb2"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/validation_rule_ablation.csv",
+      "bytes": 87407,
+      "sha256": "a6542cdc00949f8f2eb0ff89bfe1df2cb954a2a8140d656e6ecd2b36a4c13ac0"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/validation_rule_contributions.csv",
+      "bytes": 348594,
+      "sha256": "30403e699f2b642b7710f0d7a7b375647fa5446212552aed73b9c92e39d0b618"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/anfis_r8_seed62/validation_rule_explanations.npz",
+      "bytes": 755503,
+      "sha256": "4d948ad65c8b1d44dd6b3bd1ced3acaf1d21fd0e99a5704c819f4339e2976a09"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/e4_all_seed_metrics.csv",
+      "bytes": 3363,
+      "sha256": "e367f8ddac1c29bd87e40554ba1f613634455c97f6f5c2b1ea7ef1e56df6e76d"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/e4_experiment_config.json",
+      "bytes": 2307,
+      "sha256": "f67c59532f5745fd323a39eaf37baba9c1245e3973e8a179d6f2af353847c47c"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/e4_seed_summary.csv",
+      "bytes": 1701,
+      "sha256": "6e8f84372f671cad15719b5ba9e2ab0ae9c2a6baa339935df626979962f00ea8"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/e4_validation_selected_by_rule_count.csv",
+      "bytes": 1414,
+      "sha256": "58d9297db25d4747f7d352c8c68754b8348c11513c0681c7aaf691adbeaf8ac6"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/e4_validation_selected_overall.json",
+      "bytes": 262,
+      "sha256": "7909df39b4527f63fa882a1ed43d12c7334d8809296d6a4fc693b5ecdf680a0f"
+    },
+    {
+      "path": "outputs/ACIT4620_E4_ANFIS/train_feature_scaler.npz",
+      "bytes": 9521,
+      "sha256": "290c5e6b418bdfcb8fe5436d313cfecdc8661f5fbc5447a4529b2e6d889fb43f"
+    }
+  ]
+}
