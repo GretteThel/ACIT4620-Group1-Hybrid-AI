@@ -1,0 +1,16 @@
+family,seed,train_seconds,trainable_params
+linear,42,4.38,8967
+linear,52,4.77,8967
+linear,62,3.66,8967
+mlp,42,4.67,10767
+mlp,52,3.29,10767
+mlp,62,2.97,10767
+anfis_r4,42,4.115,10564
+anfis_r4,52,4.302,10564
+anfis_r4,62,3.319,10564
+anfis_r8,42,5.737,10880
+anfis_r8,52,4.082,10880
+anfis_r8,62,4.966,10880
+anfis_r16,42,3.753,11512
+anfis_r16,52,5.652,11512
+anfis_r16,62,5.492,11512
