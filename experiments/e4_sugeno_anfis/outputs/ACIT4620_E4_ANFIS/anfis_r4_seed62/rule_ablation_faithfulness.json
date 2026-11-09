@@ -1,0 +1,14 @@
+{
+  "max_abs_signed": {
+    "mean_abs_original_predicted_logit_change": 4.392805576324463,
+    "mean_abs_original_predicted_probability_change": 0.5861414670944214,
+    "fraction_predicted_class_changed": 0.6537126898765564
+  },
+  "min_abs_signed": {
+    "mean_abs_original_predicted_logit_change": 0.0004321854212321341,
+    "mean_abs_original_predicted_probability_change": 7.833019481040537e-05,
+    "fraction_predicted_class_changed": 0.0
+  },
+  "design": "Remove either maximum-absolute signed-contribution or minimum-absolute signed-contribution rule for the original predicted class; renormalize surviving firing weights; freeze learned parameters.",
+  "limitation": "Latent-rule ablation is a diagnostic faithfulness proxy, not clinical causal validation or image-level occlusion."
+}
