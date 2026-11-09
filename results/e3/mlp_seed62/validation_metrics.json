@@ -1,0 +1,21 @@
+{
+  "head": "mlp",
+  "seed": 62,
+  "best_epoch": 25,
+  "epochs_completed": 40,
+  "train_seconds": 2.97,
+  "trainable_params": 10767,
+  "accuracy": 0.7189451769604441,
+  "macro_f1": 0.5507921344855522,
+  "balanced_accuracy": 0.5816145094702388,
+  "weighted_f1": 0.7388458123816912,
+  "melanoma_precision": 0.2987551867219917,
+  "melanoma_recall": 0.4931506849315068,
+  "melanoma_f1": 0.37209302325581395,
+  "melanoma_tp": 72,
+  "melanoma_fn": 74,
+  "nll": 1.0970230999854276,
+  "multiclass_brier": 0.4456909150083384,
+  "macro_ovr_auroc": 0.9232992595430568,
+  "macro_ovr_ap": 0.6012144700492119
+}
