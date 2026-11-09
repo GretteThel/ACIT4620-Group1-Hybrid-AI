@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+*.pyc
+.DS_Store
+# Never upload original HAM10000 image pixels or downloaded dataset archives.
+data/raw/**/*.jpg
+data/raw/**/*.jpeg
+data/raw/**/*.png
+data/raw/**/*.JPG
+data/raw/**/*.JPEG
+data/raw/**/*.PNG
+data/raw/**/*.zip
