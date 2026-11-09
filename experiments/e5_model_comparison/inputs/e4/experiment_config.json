@@ -1,0 +1,51 @@
+{
+  "experiment": "ACIT4620_E4_First_Order_Takagi_Sugeno_ANFIS",
+  "source_proposal": "ACIT4620 Group 1 submitted MA1 proposal, first-order multi-output Sugeno",
+  "feature_source": "Notebook 06 frozen EfficientNet-B0 E2a-50, pooled 1280D features",
+  "source_checkpoint_sha256": "2efbe67904bed16aec8fbf1f47e3af11f1a0136e7eab4a4c5cbd004edf9b9af9",
+  "split_sha256": "265ec2412f4dd7d50c75b46d75a095c0d3445250895b90b91f3d73aca9aebce0",
+  "class_codes": [
+    "nv",
+    "mel",
+    "bkl",
+    "bcc",
+    "akiec",
+    "vasc",
+    "df"
+  ],
+  "train_images": 7116,
+  "validation_images": 1441,
+  "test_images_processed": 0,
+  "test_set_locked": true,
+  "train_only_standardization": true,
+  "projection": "trainable linear 1280 -> 8, no activation",
+  "antecedents": "R trainable Gaussian centers/positive widths per projected dimension",
+  "rule_combination": "product firing, computed as summed Gaussian log memberships",
+  "rule_normalization": "stable Softmax of log firing strengths",
+  "consequents": "each rule has 7 first-order affine output functions",
+  "final_output": "weighted sum of affine consequents = 7 logits, then Softmax",
+  "rule_counts": [
+    4,
+    8,
+    16
+  ],
+  "seeds": [
+    42,
+    52,
+    62
+  ],
+  "premise_initialization": "TRAIN-only KMeans on initial linearly projected features",
+  "optimizer": "Adam joint gradient descent/backprop (NOT classical ANFIS LSE + GD)",
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "batch_size": 128,
+  "max_epochs": 100,
+  "patience": 15,
+  "gradient_clip_norm": 5.0,
+  "loss": "train-frequency inverse weighted multiclass cross-entropy",
+  "model_selection": "validation macro-F1; secondary metrics descriptive only",
+  "explanations": "normalized rule strengths and signed per-class contributions",
+  "ablation": "remove high/low absolute-contribution rule for original predicted class, renormalize remaining weights; validation-only faithfulness proxy",
+  "efficiency": "head-only inference latency, parameters, training time, separate rule-analysis/export time; CNN excluded",
+  "limitations": "Latent fuzzy rules lack direct diagnostic semantics; no image-level Grad-CAM or occlusion in this feature-only notebook. Validation used for checkpoint and model selection; test locked."
+}
