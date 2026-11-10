@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+model_assets/*
+!model_assets/.gitkeep
+outputs/*
+!outputs/.gitkeep
+*.pyc
+.env
+.env.*
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.zip
