@@ -1,106 +1,95 @@
-# ACIT4620 — HAM10000 Hybrid AI
+# ACIT4620 — Group 1 Hybrid AI | HAM10000 (7 classes)
 
-**Research prototype: Data-Centric Seven-Class Skin Lesion Classification using Pretrained EfficientNet-B0 and planned Neuro-Fuzzy Classification Correction.**
+**Research project:** Lesion-disjoint seven-class dermoscopic classification with a pretrained **EfficientNet-B0** backbone, data-centric CNN experiments and a **first-order Takagi–Sugeno CNN–ANFIS** classifier. The project includes baselines, matched validation comparison, explainability, efficiency benchmarking, a frozen locked-test protocol and a non-clinical Streamlit demonstration.
 
-## Current status (7 November 2026)
+> **Research use only.** The seven output categories are not all cancers. Model probabilities are uncalibrated softmax scores, not clinical cancer-risk estimates. Neither Grad-CAM nor fuzzy-rule firing is diagnostic or causal evidence. The held-out test evaluation is **not reported** in this repository snapshot.
 
-- Dataset: HAM10000 / ISIC 2018 **Task 3 — Lesion Diagnosis** (10,015 dermoscopic images, 7 diagnosis categories).
-- EDA has been run on Kaggle, and a **lesion-disjoint** train/validation/test assignment has been verified.
-- Source notebook is provided in `notebooks/01_HAM10000_Seven_Class_Data_Audit.ipynb` (outputs cleared for version control; rerun on Kaggle to reproduce figures).
-- **Local full audit completed:** all 10,015 images decoded without failures; two identical-content pairs stay within their original lesion groups, with zero cross-lesion identical-content hashes. See `docs/dataset_audit_findings.md` for provenance and split-reproduction limits.
-- **Local CNN baseline completed:** EfficientNet-B0 completed 3 head epochs and 8 partial fine-tuning epochs on the fixed local split. Validation accuracy is 75.29%, macro-F1 0.4896, balanced accuracy 46.69%, and melanoma recall 21.23%. Checkpoint, predictions, plots and comparison with the initial 3-epoch run are saved locally in `reports/local_runs/20261107_cnn_baseline_full/` (excluded from Git). See the [local runner guide](docs/local_training.md). These are validation/model-selection results; final test evaluation remains pending.
-- **Additional fine-tuning completed:** 8 more epochs from the baseline weights, with a fresh optimizer, reached validation accuracy 77.65%, macro-F1 0.5328, balanced accuracy 51.35%, and melanoma recall 30.82%. The new run is preserved in `reports/local_runs/20261107_cnn_finetune_continued/`. Three-run comparison CSVs and PNG/SVG figures are in `reports/comparisons/20261107_cnn_three_runs/`. Existing run folders were retained; test evaluation remains pending.
-- **Class-weight M2 trial completed:** seed 42, same maximum 3+8 epoch budget and stopping rule. The run stopped after 7 epochs and selected head epoch 3. Melanoma recall improved from 21.23% to 34.25%, while accuracy fell from 75.29% to 53.57% and macro-F1 from 0.4896 to 0.3778. This setting is not an overall improvement under the primary macro-F1 criterion. See `reports/classifier_comparisons/20261107_weighted_vs_ce_seed42/` locally.
-- **Primary hybrid target clarified:** a neuro-fuzzy stage should output corrected final seven-class predictions. The [classifier comparison guide](docs/neuro_fuzzy_evaluation.md) and evaluator support actual final decisions and paired lesion difference intervals. The neuro-fuzzy classifier itself and its real predictions are still pending; no hybrid improvement has been established.
-- **Longer local training completed:** both CNN branches ran 16 additional epochs with patience 12. The selected ordinary CNN reached accuracy 78.28%, macro-F1 0.5402 and melanoma recall 32.88%; its macro-F1 increase over the previous best is small (+0.00739; conditional paired 95% interval -0.01441 to +0.02814). The weighted branch improved over its own source to macro-F1 0.4412, accuracy 63.64%, balanced accuracy 62.43% and melanoma recall 38.36%, but remains below the ordinary CNN on the primary macro-F1 criterion. Five-run CSVs and PNG/SVG plots are in `reports/comparisons/20261107_extended_training_five_runs/`. These are single-seed validation results; no final-test or neuro-fuzzy gain has been established.
-- **Not yet completed:** repeated-training evidence, final model/hybrid selection and held-out test evaluation. Earlier review-priority analyses remain a secondary experiment.
-- **Evaluation code ready:** [validation/review evaluation guide](docs/evaluation_guide.md). Saved predictions support melanoma PR/ROC analysis, calibration summaries, lesion bootstrap intervals and matched-workload review comparisons. Real fuzzy scores can be connected by image ID plus checkpoint/split hashes; no fuzzy results are fabricated. The first report is saved locally in `reports/evaluation/20261107_cnn_review_baselines/`.
+## Current integration status — 10 November 2026
 
-## Classification labels
+| Workstream | Status | Repository location |
+|---|---|---|
+| Seven-class data audit and split | Implemented, verified lesion-disjoint | [`notebooks/`](notebooks/), [`docs/dataset_audit_findings.md`](docs/dataset_audit_findings.md) |
+| Initial CNN and data-centric variants | Implemented; multiple separate CNN training runs | [`notebooks/`](notebooks/), [`scripts/`](scripts/) |
+| E3 Linear / MLP frozen-feature baselines | Completed (3 seeds per head) | [`experiments/e3_linear_mlp/`](experiments/e3_linear_mlp/) |
+| E4 multi-output Sugeno ANFIS | Completed (4, 8, 16 rules × 3 seeds) | [`experiments/e4_sugeno_anfis/`](experiments/e4_sugeno_anfis/) |
+| E5 matched validation comparison | Completed; **no demonstrated ANFIS superiority** | [`experiments/e5_model_comparison/`](experiments/e5_model_comparison/) |
+| E6 CNN–ANFIS explanations | Completed image-level validation analysis; artifact-label review pending | [`experiments/e6_cnn_anfis_explainability/`](experiments/e6_cnn_anfis_explainability/) |
+| E7 computational efficiency | Completed benchmark outputs | [`experiments/e7_computational_efficiency/`](experiments/e7_computational_efficiency/) |
+| Notebook 12 final locked-test evaluator | Code and local pre-test freeze prepared; **test pending group sign-off** | [`evaluation/notebook12_locked_test/`](evaluation/notebook12_locked_test/) |
+| Streamlit demo | Implemented and validated on selected validation JPEGs | [`artifact/cnn_anfis_streamlit/`](artifact/cnn_anfis_streamlit/) |
+| IEEE report | In progress | [`reports/`](reports/) |
 
-| Index | Code | Diagnosis | Total images |
-|---:|---|---|---:|
-| 0 | `nv` | Melanocytic nevi | 6,705 |
-| 1 | `mel` | Melanoma | 1,113 |
-| 2 | `bkl` | Benign keratosis-like lesions | 1,099 |
-| 3 | `bcc` | Basal cell carcinoma | 514 |
-| 4 | `akiec` | Actinic keratoses / intraepithelial carcinoma | 327 |
-| 5 | `vasc` | Vascular lesions | 142 |
-| 6 | `df` | Dermatofibroma | 115 |
+**Integration note:** The repository contains both earlier local CNN training runs documented by teammates and the later E2a-50 frozen-backbone experiments. They are separate experimental histories; do **not** combine their metrics or imply that a model from one run produced predictions from the other. The former root README, preserved as [`docs/README_HISTORY_2026-11-07.md`](docs/README_HISTORY_2026-11-07.md), is historical and should not be used as the current status.
 
-These are **seven diagnoses**, not seven cancers. This is not a clinically validated diagnostic tool.
+## Dataset and provenance
 
-## Dataset split (already verified on Kaggle)
+- **Dataset:** HAM10000, 10,015 dermoscopic images; ISIC 2018 Task 3 **diagnosis task** (not segmentation).
+- **Seven-class index order:** `nv`, `mel`, `bkl`, `bcc`, `akiec`, `vasc`, `df`.
+- **Fixed split:** train **7,116**, validation **1,441**, internally held-out test **1,458** images; `lesion_id` groups do not overlap between partitions. Patient-level disjointness cannot be demonstrated from the available metadata.
+- **Split SHA-256:** `265ec2412f4dd7d50c75b46d75a095c0d3445250895b90b91f3d73aca9aebce0`.
+- **Selected E2a-50 CNN checkpoint SHA-256:** `2efbe67904bed16aec8fbf1f47e3af11f1a0136e7eab4a4c5cbd004edf9b9af9`.
+- The test set here is an internal lesion-disjoint holdout of HAM10000, **not the official hidden ISIC Challenge test set**.
 
-| Set | Images | Distinct lesions |
-|---|---:|---:|
-| Train | 7,116 | 5,335 |
-| Validation | 1,441 | 1,067 |
-| Test | 1,458 | 1,068 |
+See [`docs/dataset_audit_findings.md`](docs/dataset_audit_findings.md) and individual experiment READMEs for methods and exceptions.
 
-Split method: `StratifiedGroupKFold(n_splits=7, shuffle=True, random_state=42)` grouping by `lesion_id`; fold 0 is validation, fold 1 is testing, other folds form training. There is **zero overlap in lesion IDs**. Patient-level disjointness cannot be verified because HAM10000 does not provide reliable patient IDs. All model variants must use the **same split**.
+## Notebook sequence and repository organization
 
-## Proposed experiment sequence
+| Notebook | What it covers | Location |
+|---|---|---|
+| 01 | Dataset audit and split | [`notebooks/`](notebooks/) |
+| 02 | Original EfficientNet-B0 CNN training | [`notebooks/`](notebooks/) |
+| 03, 03B, 03C, 03D | Class weighting, longer fine-tuning, E2a-50, recovery | [`notebooks/`](notebooks/) |
+| 04 | Shared validation metrics | [`notebooks/`](notebooks/) |
+| 05 | Rotation ablation (E2b) | [`notebooks/`](notebooks/) |
+| 06 | Shared frozen EfficientNet features | [`notebooks/`](notebooks/) |
+| 07 / E3 | Linear and MLP head baselines | [`experiments/e3_linear_mlp/`](experiments/e3_linear_mlp/) |
+| 08 / E4 | Multi-output Sugeno ANFIS | [`experiments/e4_sugeno_anfis/`](experiments/e4_sugeno_anfis/) |
+| 09 / E5 | Matched validation comparison and statistical analysis | [`experiments/e5_model_comparison/`](experiments/e5_model_comparison/) |
+| 10 / E6 | ANFIS-aware Grad-CAM, stability, occlusion | [`experiments/e6_cnn_anfis_explainability/`](experiments/e6_cnn_anfis_explainability/) |
+| 11 / E7 | Parameter, latency, training-step and sampled-RAM analysis | [`experiments/e7_computational_efficiency/`](experiments/e7_computational_efficiency/) |
+| 12 | Frozen final test evaluation (not executed here) | [`evaluation/notebook12_locked_test/`](evaluation/notebook12_locked_test/) |
 
-1. Complete data-centric audit: image integrity, repeated-lesion grouping, metadata quality, sample and full-image QC, leakage analysis, and exact-content duplicate checks.
-2. Train seven-output pretrained EfficientNet-B0 with training-only augmentations. Run baseline with regular cross-entropy.
-3. Compare data-centric alternatives, e.g. careful minority-class augmentation/resampling; also test class-weighted cross-entropy **as an optimization choice**. Never change validation/test distributions.
-4. Select/configure model using **validation only** and assess per-class errors, calibration, and subgroup effects.
-5. Implement the neuro-fuzzy final-class corrector and compare the same frozen CNN with and without it. Measure actual classification differences and both corrected/new errors. Optional Mamdani review-priority comparisons remain separate.
-6. Freeze the full configuration before final held-out test evaluation; report classification metrics, paired comparisons and limitations. Never choose further model settings from test results.
+**E3–E7 are experiment IDs, not notebook numbers.** The repository additionally includes reusable package code in [`src/`](src/), a teammate's local training scripts in [`scripts/`](scripts/), shared tests in [`tests/`](tests/), configuration templates in [`configs/`](configs/) and team/project documents in [`docs/`](docs/).
 
-Neuro-fuzzy classification improvement is a hypothesis to test. A review-priority score alone does **not** demonstrate classification improvement; it needs separate review-workload evaluation.
+## Selected-model architecture and validation anchors
 
-## Repo layout
+**Dermoscopic image → EfficientNet-B0 → pooled 1,280-D features → train-only feature scaling → trainable 8-D projection → Gaussian fuzzy premises → 4/8/16 first-order Sugeno rules → seven logits → softmax.** The original CNN and classical Linear/MLP heads serve as comparators. No clinical calibration is claimed.
 
-```text
-notebooks/01_HAM10000_Seven_Class_Data_Audit.ipynb  EDA + seven-class manifests
-src/                                             Future training and fuzzy modules
-docs/dataset_audit_findings.md                   Verified EDA observations
-docs/kaggle_setup.md                            Kaggle run guide
-docs/methodology.md                             Experiment and evaluation protocol
-docs/team_workflow.md                           Collaboration rules
-requirements.txt                                Python packages
-.gitignore                                      Excludes images, checkpoints and local data
-```
+The six validation-selected *primary* configurations in Notebook 12 were fixed using validation macro-F1:
 
-## Reproduce the inspection
+| Configuration | Validation macro-F1 |
+|---|---:|
+| CNN E2a-50 | 0.5500 |
+| Linear seed 42 | 0.5455 |
+| MLP seed 42 | **0.5749** |
+| ANFIS R4 seed 52 | 0.5499 |
+| ANFIS R8 seed 42 | 0.5588 |
+| ANFIS R16 seed 52 | 0.5676 |
 
-1. Open Kaggle dataset: [Skin Cancer MNIST: HAM10000](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000).
-2. Create/import the notebook in `notebooks/` and attach that Kaggle dataset via **Add Input**.
-3. In Section 1, set `RUN_FULL_IMAGE_AUDIT = True` and `RUN_EXACT_HASH_AUDIT = True` for the final complete audit (may take time).
-4. Run cells from top to bottom. Confirm that `ham10000_audit/` and `ham10000_7class/` exist under `/kaggle/working`.
-5. Save a completed Kaggle version and verify its outputs persist.
-6. Record the run's version/URL and any QC exceptions in `docs/dataset_audit_findings.md`.
+These are **validation** scores from [`E5`](experiments/e5_model_comparison/); they are neither locked-test outcomes nor evidence of ANFIS superiority. All 16 seed/family variants are included as predefined secondary sensitivity comparisons. See [`MODEL_SELECTION_AND_EVALUATION_PROTOCOL.md`](evaluation/notebook12_locked_test/MODEL_SELECTION_AND_EVALUATION_PROTOCOL.md).
 
-## Data and licensing
+## Reproducibility and run instructions
 
-**Do not commit raw HAM10000 images or Kaggle CSV mirror data to GitHub.** Each contributor obtains the dataset directly from its official source and follows the relevant terms, including attribution and non-commercial restrictions where applicable. Repository content is intended for coursework; review project and dataset licensing before any public release.
-
-- Original dataset: Tschandl, P., Rosendahl, C., & Kittler, H. (2018), *The HAM10000 dataset*, Scientific Data. https://doi.org/10.1038/sdata.2018.161
-- ISIC challenge: Codella et al., *Skin Lesion Analysis Toward Melanoma Detection 2018* (2019 preprint): https://arxiv.org/abs/1902.03368
-- ISIC challenge portal: https://challenge.isic-archive.com/
-
-## Team contributions
-
-Create a GitHub issue for each concrete task and submit changes on a branch via pull request. See `docs/team_workflow.md`.
-
-## Software engineering practices
-
-This repository also includes a lightweight, tested Python package (`src/ham10000_hybrid/`), synthetic-data unit tests, GitHub Actions CI, issue and pull-request templates, and an architecture decision record. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`docs/experiment_protocol.md`](docs/experiment_protocol.md).
-
-**Start locally:**
+**General Python package and root tests** (Python 3.11+ recommended):
 
 ```bash
 python -m pip install -e '.[dev]'
-ruff check src tests scripts
-pytest
+python -m pytest -q tests
 ```
 
-**GitHub placement:** `.github/workflows/ci.yml` works as-is only when this project is its **own GitHub repository root**. If the project lives inside a larger `Masters/` repository, move this file to that repository's root `.github/workflows/` and point its job to this subdirectory.
+Individual experiments have separate requirements, saved inputs and instructions; consult their own READMEs before running them. Results in separate training histories should not be assumed directly comparable. Do not rerun the locked test to improve scores.
 
-The validation and metric modules are reusable helpers. EfficientNet training code is
-available in Notebook 02 and the local runner; successful dataset training requires
-the saved manifests, original images and completed audit. Mamdani inference remains planned.
+**Streamlit research app:** follow [`artifact/cnn_anfis_streamlit/README.md`](artifact/cnn_anfis_streamlit/README.md). The repository contains its source and integrity checks, but **not** the locally restored checkpoints inside the app folder. Seven validation class examples have passed prediction-parity checks; this is not a seven-image model-accuracy study.
 
+**Notebook 12:** code is published, but the repository snapshot **is not a self-contained fresh-clone reproduction of the freeze**. Original pinned validation input files under `evaluation/notebook12_locked_test/data/`, the matching ANFIS implementation dependency and an authorized local sealed manifest must be restored and integrity-checked. Do not fabricate replacement files, modify the already created local freeze, or expose sealed test labels. See [`docs/REPOSITORY_AUDIT_2026-11-10.md`](docs/REPOSITORY_AUDIT_2026-11-10.md).
 
+## GitHub housekeeping and data use
+
+- Keep the research code, validation metrics, figure captions and provenance; do not remove assets that affect a frozen checkpoint or result without a separately reviewed cleanup plan.
+- This snapshot **does contain tracked model weights and some image-derived Grad-CAM overlays** inside experiment directories, despite exclusions for *new* raw-image or weight files in `.gitignore`. Review publication rights and model-asset policy before copying the repository to a public location. Do not claim it is source-code-only.
+- No raw HAM10000 JPG dataset was included in the audited snapshot. Obtain authorized original images independently from [HAM10000](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000) and respect dataset licensing and attribution.
+- Leave the original local pre-test selection freeze unchanged and obtain genuine team sign-off before any held-out evaluation. The acquisition-artifact human-review subgroup remains pending; automated artifact suggestions are not ground truth.
+
+**Further guidance:** [`docs/REPOSITORY_AUDIT_2026-11-10.md`](docs/REPOSITORY_AUDIT_2026-11-10.md), [`CONTRIBUTING.md`](CONTRIBUTING.md), [`docs/team_workflow.md`](docs/team_workflow.md).
+
+**Dataset reference:** Tschandl, P., Rosendahl, C., & Kittler, H. (2018). *The HAM10000 dataset*. *Scientific Data*. https://doi.org/10.1038/sdata.2018.161
