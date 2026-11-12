@@ -83,6 +83,33 @@ End-to-end CNN+ANFIS inference latency and ANFIS-aware Grad-CAM are **subsequent
 - GPU unavailable / `CUDA False`: CPU is supported.
 - If results show unexpectedly low macro-F1, inspect class-specific outputs, rule activations and the recorded training history; **do not claim** neuro-fuzzy superiority without evidence.
 
+## Optional validation-only weight-decay comparison
+
+The original defaults and saved outputs remain the reference experiment.
+For a separate sensitivity experiment, use the original Notebook 06 input ZIP
+or its extracted feature folder:
+
+```powershell
+..\..\.venv\Scripts\python.exe run_weight_decay_sweep.py --features 'C:\path\to\ACIT4620_06_Shared_Features.zip'
+```
+
+Run this command from `experiments/e4_sugeno_anfis`. The fixed comparison is
+`weight_decay = [1e-4, 3e-4, 1e-3]`, sixteen rules, and seeds `[42, 52, 62]`:
+nine training runs. Learning rate, batch size, maximum epochs, early stopping,
+feature standardization and model architecture retain the reference settings.
+
+Use `--dry-run` to inspect the plan without reading data or writing outputs.
+An optional `--output-dir` must name a directory that does not already exist.
+By default, new results go under `reports/e4_weight_decay_<UTC timestamp>/`.
+The comparison includes all per-run outputs, matched-seed differences from the
+fresh baseline, a mean/sample-SD summary CSV, and `weight_decay_comparison.png`.
+Original E4 results and the locked-test model selection are not replaced.
+
+The training script also accepts `--weight-decay`, `--rule-counts`, `--seeds`,
+`--features` and `--output-dir` for individual exploratory runs. With no options,
+its original experiment settings and output location are retained. Use a new
+explicit output directory for all additional experiments.
+
 ## 6. GitHub hygiene
 
 For the team repository audit, **all 150 E4 output files and the original 12.33 MB E4 output ZIP are intentionally included** in this isolated E4 folder, per the team's decision. This is feasible for the present artifact sizes but increases Git storage. The repository root ignores `*.npz` and `*.pth`; use the project-specific force-add command in `PUSH_E4_TO_GITHUB.md` to include the nine model checkpoints and all explanation arrays. Do not commit raw HAM10000 images, input feature datasets, environments, or credentials.

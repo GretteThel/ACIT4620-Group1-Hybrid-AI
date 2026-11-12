@@ -6,6 +6,7 @@ proposal defines the architecture and joint Adam/backprop optimization.
 """
 
 # %% 1. Imports and protocol constants
+import argparse
 import os, json, random, time, shutil, zipfile, hashlib
 from pathlib import Path
 import numpy as np
@@ -21,27 +22,49 @@ from sklearn.metrics import (
 )
 from anfis_core import MultiOutputSugenoANFIS, initialize_premises_train_only, rule_ablation_statistics
 
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--weight-decay', type=float, default=1e-4)
+parser.add_argument('--rule-counts', type=int, nargs='+', default=[4, 8, 16])
+parser.add_argument('--seeds', type=int, nargs='+', default=[42, 52, 62])
+parser.add_argument('--features', type=Path, help='Original Notebook 06 feature folder or ZIP')
+parser.add_argument('--output-dir', type=Path, help='New, empty output directory')
+args = parser.parse_args()
+if not np.isfinite(args.weight_decay) or args.weight_decay < 0:
+    parser.error('--weight-decay must be finite and nonnegative')
+if any(value < 2 for value in args.rule_counts) or len(set(args.rule_counts)) != len(args.rule_counts):
+    parser.error('--rule-counts must contain unique integers of at least two')
+if any(value < 0 or value >= 2**32 for value in args.seeds) or len(set(args.seeds)) != len(args.seeds):
+    parser.error('--seeds must contain unique integers in [0, 2**32)')
+if args.features is not None and not args.features.expanduser().exists():
+    parser.error('--features must point to an existing original feature folder or ZIP')
+if args.output_dir is not None:
+    requested_output = args.output_dir.expanduser().resolve()
+    if requested_output.exists() and (not requested_output.is_dir() or any(requested_output.iterdir())):
+        parser.error('--output-dir must be a new or empty directory')
+
 # The standalone script resolves its own folder; the notebook uses its workspace.
 PROJECT_ROOT = Path(__file__).resolve().parent if '__file__' in globals() else Path.cwd().resolve()
 if not (PROJECT_ROOT / 'data').is_dir() and (PROJECT_ROOT / 'ACIT4620_08_E4_ANFIS_VSCode' / 'data').is_dir():
     PROJECT_ROOT = PROJECT_ROOT / 'ACIT4620_08_E4_ANFIS_VSCode'
 DATA_DIR = PROJECT_ROOT / 'data'
 DATA_DIR.mkdir(parents=True, exist_ok=True)
-OUT = PROJECT_ROOT / 'outputs' / 'ACIT4620_E4_ANFIS'
+OUT = (args.output_dir.expanduser().resolve() if args.output_dir is not None
+       else PROJECT_ROOT / 'outputs' / 'ACIT4620_E4_ANFIS')
 OUT.mkdir(parents=True, exist_ok=True)
 
 # If necessary, supply the full local path to a Notebook 06 ZIP or feature folder.
-FEATURE_SOURCE_OVERRIDE = None  # Example: Path(r'C:\Users\You\Downloads\ACIT4620_06_Shared_Features.zip')
+FEATURE_SOURCE_OVERRIDE = args.features
 EXPECTED_ZIP = 'ACIT4620_06_Shared_Features.zip'
 EXPECTED_SPLIT_SHA256 = '265ec2412f4dd7d50c75b46d75a095c0d3445250895b90b91f3d73aca9aebce0'
 EXPECTED_CHECKPOINT_SHA256 = '2efbe67904bed16aec8fbf1f47e3af11f1a0136e7eab4a4c5cbd004edf9b9af9'
 CLASS_CODES = ['nv','mel','bkl','bcc','akiec','vasc','df']
 EXPECTED_SPLITS = {'train': 7116, 'validation': 1441}
 FEATURE_DIM, LATENT_DIM, N_CLASSES = 1280, 8, 7
-RULE_COUNTS = [4, 8, 16]
-SEEDS = [42, 52, 62]
+RULE_COUNTS = args.rule_counts
+SEEDS = args.seeds
 MAX_EPOCHS, PATIENCE = 100, 15
-BATCH_SIZE, LEARNING_RATE, WEIGHT_DECAY = 128, 1e-3, 1e-4
+BATCH_SIZE, LEARNING_RATE, WEIGHT_DECAY = 128, 1e-3, args.weight_decay
 MAX_GRAD_NORM = 5.0
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 if DEVICE.type == 'cpu':
@@ -522,7 +545,7 @@ for n_rules in RULE_COUNTS:
             'rule_activation_by_class.png','premise_initialization.json'
         ]:
             assert (folder/name).is_file() and (folder/name).stat().st_size>0,(folder,name)
-archive=shutil.make_archive(str(PROJECT_ROOT/'outputs'/'ACIT4620_E4_ANFIS_Outputs'),
+archive=shutil.make_archive(str(OUT.with_name(OUT.name + '_Outputs')),
                             'zip',root_dir=OUT.parent,base_dir=OUT.name)
 print(f'PASS: {len(RULE_COUNTS)*len(SEEDS)} checkpoints, metrics, validation predictions, rule contributions and ablations saved')
 print('ZIP backup:',archive,'size MB:',round(Path(archive).stat().st_size/1048576,2))
