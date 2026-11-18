@@ -1,1 +1,0 @@
-Input (NOT committed): copy the existing Notebook 06 `ACIT4620_shared_features_e2a50` directory into this folder to rerun E4. These inputs are not among the 150 E4-generated output files. The recorded E4 results are already complete under `outputs/`.

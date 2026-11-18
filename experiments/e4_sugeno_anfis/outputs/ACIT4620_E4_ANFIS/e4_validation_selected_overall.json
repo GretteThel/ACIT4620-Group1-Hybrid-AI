@@ -1,8 +1,0 @@
-{
-  "n_rules": 16,
-  "seed": 52,
-  "macro_f1": 0.5676417736129639,
-  "best_epoch": 27,
-  "rule_selection_policy": "Highest validation macro-F1; tie smaller R then seed",
-  "warning": "This is validation-selected; not unbiased held-out-test performance."
-}
