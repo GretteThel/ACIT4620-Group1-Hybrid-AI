@@ -1,0 +1,13 @@
+{
+  "metadata_sha256": "06aee5e603d313ba69de38263053c792a1dff030eb9c44a96ceb477ceefb99a5",
+  "split_seed": 20261118,
+  "split_folds": 7,
+  "method": "StratifiedGroupKFold; label-only selection of validation/test folds",
+  "dataset_images": 10015,
+  "split_sizes": {
+    "train": 7168,
+    "val": 1434,
+    "test": 1413
+  },
+  "generated_manifest_sha256": "14d91a82418a54ee285ce399b3ae45bfadc10a5b54f51eb82df96dbcc5e2cf2d"
+}

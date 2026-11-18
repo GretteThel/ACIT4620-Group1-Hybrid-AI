@@ -1,0 +1,17 @@
+{
+  "manifest_sha256": "14d91a82418a54ee285ce399b3ae45bfadc10a5b54f51eb82df96dbcc5e2cf2d",
+  "mode": "train",
+  "seed": 42,
+  "image_size": 300,
+  "data_policy": "standard",
+  "warmup": 2,
+  "depth": 4,
+  "max_epochs": 20,
+  "lr_backbone": 3e-05,
+  "lr_classifier": 0.0003,
+  "learning_rate_anfis": 0.001,
+  "weight_decay": 0.0001,
+  "label_smoothing": 0.02,
+  "fuzzy_rules": 16,
+  "coverage_lambda": 0.02
+}
