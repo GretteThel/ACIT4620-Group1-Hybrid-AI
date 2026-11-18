@@ -1,17 +1,15 @@
-# Core EDA packages (Kaggle has many installed already)
-numpy
-pandas
-scipy
-scikit-learn
-matplotlib
-seaborn
-Pillow
-tqdm
-IPython
+# Dependencies imported by the final ACIT4620 single-notebook workflow.
+# The recommended runtime is Kaggle with compatible PyTorch/torchvision preinstalled.
+# Avoid indiscriminately upgrading the Kaggle CUDA stack.
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.3
+matplotlib>=3.7
+Pillow>=10
+IPython>=8
+opencv-python-headless>=4.8
+torch>=2.2
+torchvision>=0.17
 
-# EfficientNet training notebook and local runner
-torch
-torchvision
-
-# Planned Mamdani fuzzy phase
-scikit-fuzzy
+# Optional: label-quality ranking if CFG.cleanlab_review=True.
+# cleanlab>=2.6
