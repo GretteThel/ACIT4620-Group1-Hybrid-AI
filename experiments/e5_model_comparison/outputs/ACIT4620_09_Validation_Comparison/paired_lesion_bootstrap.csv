@@ -1,6 +1,0 @@
-model_a,model_b,delta_b_minus_a_macro_f1,ci95_low,ci95_high,bootstrap_resamples,lesions,interval_includes_zero,interpretation
-mlp_seed42,anfis_r16_seed52,-0.007265180820999251,-0.05334337664638983,0.04847880187931359,1200,1067,True,exploratory paired class-stratified lesion bootstrap on validation-selected fitted predictions; no seed/model-selection uncertainty
-linear_seed42,anfis_r16_seed52,0.022097402329271265,-0.022210852219116627,0.06376131725907049,1200,1067,True,exploratory paired class-stratified lesion bootstrap on validation-selected fitted predictions; no seed/model-selection uncertainty
-cnn_e2a50,mlp_seed42,0.02488329278000323,-0.02180783327723559,0.06602208893317782,1200,1067,True,exploratory paired class-stratified lesion bootstrap on validation-selected fitted predictions; no seed/model-selection uncertainty
-cnn_e2a50,anfis_r16_seed52,0.01761811195900398,-0.03301278731417006,0.07108222136335143,1200,1067,True,exploratory paired class-stratified lesion bootstrap on validation-selected fitted predictions; no seed/model-selection uncertainty
-mlp_seed42,anfis_r8_seed42,-0.016073687434248307,-0.07793274327466941,0.05900058623359631,1200,1067,True,exploratory paired class-stratified lesion bootstrap on validation-selected fitted predictions; no seed/model-selection uncertainty

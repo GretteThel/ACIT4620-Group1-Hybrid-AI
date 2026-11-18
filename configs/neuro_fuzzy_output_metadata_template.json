@@ -1,9 +1,0 @@
-{
-  "source_cnn_run_id": "REPLACE_WITH_SELECTED_CNN_RUN_FOLDER_NAME",
-  "source_checkpoint_sha256": "REPLACE_WITH_ACTUAL_SOURCE_CHECKPOINT_HASH",
-  "split_sha256": "REPLACE_WITH_FIXED_SPLIT_FINGERPRINT",
-  "class_codes": ["nv", "mel", "bkl", "bcc", "akiec", "vasc", "df"],
-  "evaluation_split": "validation",
-  "hybrid_fit_split": "train",
-  "hybrid_version": "REPLACE_WITH_ACTUAL_MODEL_OR_RULE_VERSION"
-}
