@@ -1,0 +1,7 @@
+{
+  "screening_only": true,
+  "does_not_change_primary_training_policy": true,
+  "primary_policy": "standard",
+  "fixed_screen_epochs": 4,
+  "sample_fraction": 0.5
+}
