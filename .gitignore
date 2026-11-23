@@ -49,3 +49,18 @@ ham10000_7class/
 dist/
 build/
 *.egg-info/
+
+# Additional generated artifacts (reproducible in Kaggle)
+*.zip
+*.tmp
+*.tmp.*
+.ipynb_checkpoints/
+__MACOSX/
+.DS_Store
+# Sensitive / unnecessary local exports
+/kaggle/working/
+/outputs/
+/checkpoints/
+/figures/
+/tables/
+# Curated results/ evidence is deliberately tracked; do not blanket-ignore results/.
