@@ -16,6 +16,26 @@ This repository presents a **single, self-contained Jupyter notebook** for data-
 
 The CNN is fine-tuned on HAM10000 images resized to **300 × 300 pixels**. ANFIS training uses gradient-based optimization (AdamW), rather than the classical forward least-squares / backward gradient-descent ANFIS algorithm. The CNN feature extractor is trained first and then used to fit the ANFIS heads; this is a **sequential hybrid**, not a jointly end-to-end trained neuro-fuzzy network.
 
+### Implemented model architecture
+
+The following diagram summarizes the **final Stage B three-model comparison** in the report (Fig. 4). Each prediction branch is evaluated **separately**; these are alternative classifiers, not an ensemble.
+
+```mermaid
+flowchart TD
+    A[HAM10000 RGB image<br/>300 x 300] --> B[ImageNet-initialized<br/>EfficientNet-B0]
+    B --> C[Global average pooling<br/>1280 features]
+    C --> D[Learned projection<br/>1280 to 128 to 16<br/>ReLU, dropout 0.20, LayerNorm]
+    D --> E[CNN-only linear head<br/>16 to 7 logits]
+    E --> F[CNN-only softmax<br/>7-class probabilities]
+    D --> G[StandardScaler<br/>fit on training embeddings only]
+    G --> H[Standard Sugeno ANFIS<br/>16 Gaussian rules<br/>7 affine outputs per rule]
+    G --> I[Coverage-regularized ANFIS<br/>same 16-rule architecture<br/>training penalty lambda = 0.02]
+    H --> J[Standard ANFIS softmax<br/>7-class probabilities]
+    I --> K[Coverage ANFIS softmax<br/>7-class probabilities]
+```
+
+The CNN-only classifier is used to train the shared representation first. The two ANFIS heads are then fitted separately on **training-standardized frozen CNN embeddings**. For the coverage head, the extra loss term balances minibatch-average rule firing during training; inference uses the same Sugeno computation as standard ANFIS. Gaussian rule activations are learned from latent features and should not be interpreted as explicit dermatological concepts.
+
 ## Dataset and partitioning
 
 - **Dataset:** HAM10000, 10,015 dermoscopic images, seven diagnostic classes: `nv`, `mel`, `bkl`, `bcc`, `akiec`, `vasc`, `df`.
@@ -77,8 +97,10 @@ The submitted notebook contains a source-code pipeline and an **assembled, expli
 
 ## Repository scope
 
-The final `master` branch intentionally contains **one executable research notebook**, this README, and lightweight dependency/configuration files. A separate `tests/` folder is **not required** for the agreed single-notebook deliverable: the notebook includes assertions and internal verification checks. Such checks are not a substitute for full automated integration testing or independent replication.
+This repository contains **one executable research notebook**, the main README, lightweight dependency/configuration files, and a curated [`results/`](results/) directory. The [`results/README.md`](results/README.md) explains the saved figures, summary tables, and run-provenance metadata. Selected figures and CSV tables **are committed** to support inspection of the report; raw dermoscopic images, model checkpoints, large intermediate archives, and exhaustive prediction exports are not included.
 
-Earlier multi-file experiments are preserved separately on `archive/pre-final-submission`. Do not mix their metrics with the current run or present them as identical protocols. Generated training datasets, figures, model checkpoints, and raw medical images are not committed to the final branch.
+The notebook includes assertions and internal verification checks, but these are not a substitute for full automated integration testing or independent replication. **Do not mix** exploratory results from earlier experimental stages with the final Stage B evaluation because the splits, representations, and training budgets differ. An archive branch, if available in the hosted GitHub repository, is separate from the reproducible final notebook described here.
+
+Useful supporting evidence: [final three-model test metrics](results/tables/one_time_three_model_test_comparison.csv), [grouped-CV summary](results/tables/cv_mean_std_readable.csv), [test confusion matrix for the CNN](results/figures/model_comparison/CNN_300_deeper_test_confusion_matrices.png), [test confusion matrix for coverage ANFIS](results/figures/model_comparison/Sugeno_ANFIS_coverage_test_confusion_matrices.png), and [training-only grouped-CV figure](results/figures/cross_validation/cv_mean_sd_model_comparison.png).
 
 **Dataset citation:** Tschandl, P., Rosendahl, C., & Kittler, H. (2018). The HAM10000 dataset, a large collection of multi-source dermatoscopic images of common pigmented skin lesions. *Scientific Data, 5*, 180161. https://doi.org/10.1038/sdata.2018.161
