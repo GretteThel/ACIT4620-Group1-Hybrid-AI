@@ -95,6 +95,20 @@ The submitted notebook contains a source-code pipeline and an **assembled, expli
 
 **For inspection without rerunning:** open the notebook and scroll to its embedded results. **Do not rerun the completed held-out test just to improve or choose scores.** If reproducing from scratch, treat its one-time test evaluation as a new experiment, and do not use the test results for tuning.
 
+
+## Supplementary Statistical Analysis
+
+A paired lesion-grouped bootstrap analysis was conducted using the original saved held-out predictions.
+
+The analysis used 2,000 bootstrap repetitions across 1,068 distinct lesion groups with a random seed of 42.
+
+Both 95% confidence intervals for macro-F1 differences relative to the CNN baseline included zero.
+
+The executable analysis, numerical results, provenance, and reproduction instructions are available in
+[Supplementary Bootstrap Analysis](supplementary/paired%20bootstrap/README.md).
+
+This supplementary analysis does not modify the original experiment, retrain the classifiers, or regenerate predictions.
+
 ## Repository scope
 
 This repository contains **one executable research notebook**, the main README, lightweight dependency/configuration files, and a curated [`results/`](results/) directory. The [`results/README.md`](results/README.md) explains the saved figures, summary tables, and run-provenance metadata. Selected figures and CSV tables **are committed** to support inspection of the report; raw dermoscopic images, model checkpoints, large intermediate archives, and exhaustive prediction exports are not included.
