@@ -1,3 +1,0 @@
-comparison,observed_macro_f1_difference,ci_95_lower,ci_95_upper,bootstrap_repetitions,lesion_groups,seed
-Sugeno_ANFIS minus CNN_300_deeper,-0.00023365,-0.03968318,0.03825333,2000,1068,42
-Sugeno_ANFIS_coverage minus CNN_300_deeper,0.00225124,-0.03510900,0.03804217,2000,1068,42
