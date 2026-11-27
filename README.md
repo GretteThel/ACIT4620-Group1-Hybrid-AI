@@ -18,7 +18,7 @@ The CNN is fine-tuned on HAM10000 images resized to **300 × 300 pixels**. ANFIS
 
 ### Implemented model architecture
 
-The following diagram summarizes the **final Stage B three-model comparison** in the report (Fig. 4). Each prediction branch is evaluated **separately**; these are alternative classifiers, not an ensemble.
+The following diagram summarizes the **final three-model comparison** in the report's feature-learning and classifier architecture figure (Fig. 3). Each prediction branch is evaluated **separately**; these are alternative classifiers, not an ensemble.
 
 ```mermaid
 flowchart TD
