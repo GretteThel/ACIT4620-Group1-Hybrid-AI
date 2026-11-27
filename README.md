@@ -105,7 +105,7 @@ The analysis used 2,000 bootstrap repetitions across 1,068 distinct lesion group
 Both 95% confidence intervals for macro-F1 differences relative to the CNN baseline included zero.
 
 The executable analysis, numerical results, provenance, and reproduction instructions are available in
-[Supplementary Bootstrap Analysis](supplementary/paired%20bootstrap/README.md).
+[Supplementary Bootstrap Analysis](supplementary/paired_bootstrap/README.md).
 
 This supplementary analysis does not modify the original experiment, retrain the classifiers, or regenerate predictions.
 
