@@ -19,3 +19,20 @@ The corresponding research notebook is `ACIT4620_Group1_Hybrid_AI.ipynb` in the 
 The test set is a **lesion-disjoint internal HAM10000 holdout**, not external clinical validation or the official hidden challenge test. Do not use these held-out results to choose a different model or hyperparameters. The 4-epoch data-policy and training-only rule-count screens do not establish that an alternative policy/rule count is superior under the full run.
 
 Dataset: Tschandl et al. (2018), *Scientific Data*, https://doi.org/10.1038/sdata.2018.161.
+
+## Supplementary Statistical Analysis
+
+The original experimental results remain unchanged.
+A supplementary paired lesion-grouped bootstrap analysis
+was conducted using the saved held-out predictions to
+quantify uncertainty in macro-F1 differences between
+classifiers.
+
+The analysis code, confidence intervals, provenance,
+and reproduction instructions are available in
+[Supplementary Bootstrap Analysis](../supplementary/paired_bootstrap/README.md).
+
+The original evidence archive,
+`ACIT4620_09_EVIDENCE_COMPLETE_reports.zip`,
+contains the complete split manifest, prediction records,
+training histories, and experimental outputs.
