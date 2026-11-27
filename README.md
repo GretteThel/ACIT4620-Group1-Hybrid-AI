@@ -95,19 +95,34 @@ The submitted notebook contains a source-code pipeline and an **assembled, expli
 
 **For inspection without rerunning:** open the notebook and scroll to its embedded results. **Do not rerun the completed held-out test just to improve or choose scores.** If reproducing from scratch, treat its one-time test evaluation as a new experiment, and do not use the test results for tuning.
 
-
 ## Supplementary Statistical Analysis
 
-A paired lesion-grouped bootstrap analysis was conducted using the original saved held-out predictions.
+A paired lesion-grouped bootstrap analysis was conducted
+using the original saved held-out predictions.
 
-The analysis used 2,000 bootstrap repetitions across 1,068 distinct lesion groups with a random seed of 42.
+- Bootstrap repetitions: 2,000
+- Distinct lesion groups: 1,068
+- Random seed: 42
+- Confidence interval: 95% percentile interval
 
-Both 95% confidence intervals for macro-F1 differences relative to the CNN baseline included zero.
+| Comparison | Macro-F1 difference | 95% confidence interval |
+|---|---:|---:|
+| Standard ANFIS minus CNN | -0.00023 | [-0.03968, 0.03825] |
+| Coverage ANFIS minus CNN | +0.00225 | [-0.03511, 0.03804] |
 
-The executable analysis, numerical results, provenance, and reproduction instructions are available in
+Both confidence intervals include zero. Therefore, the
+observed macro-F1 differences do not establish statistical
+superiority over the CNN baseline.
+
+The executable supplementary code, numerical results,
+provenance records, and reproduction instructions are
+available in the
 [Supplementary Bootstrap Analysis](supplementary/paired_bootstrap/README.md).
 
-This supplementary analysis does not modify the original experiment, retrain the classifiers, or regenerate predictions.
+This analysis uses the original saved predictions without
+retraining the classifiers, modifying predictions, or
+performing test-based model selection.
+
 
 ## Repository scope
 
