@@ -8,8 +8,9 @@ matplotlib>=3.7
 Pillow>=10
 IPython>=8
 opencv-python-headless>=4.8
-torch>=2.2
-torchvision>=0.17
+# The notebook uses torch.amp.GradScaler, available from PyTorch 2.3.
+torch>=2.3
+torchvision>=0.18
 
 # Optional: label-quality ranking if CFG.cleanlab_review=True.
 # cleanlab>=2.6
